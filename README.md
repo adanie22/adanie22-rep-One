@@ -1,2 +1,3 @@
-# servicenow-agility
-Parking Lot for code and config for ServiceNow integration with Agility Platform
+# adanie22-rep-one
+First attempt at creating a github repository.
+Watch this space for more interesting and fruitful contributions over time.
