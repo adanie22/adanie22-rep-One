@@ -1,0 +1,69 @@
+﻿<?xml version="1.0"?>
+<DS>
+    <!-- Location where DS script will generate logs and other output. If this folder does not exist, DS script
+         will automatically crete it.  -->
+    <OutputFolder>C:\DSOutput</OutputFolder>
+    
+
+    <!-- Indicate whether DS script should set pagefile settings as per DSSOE standards -->
+    <ConfigurePageFile>true</ConfigurePageFile>
+    
+
+    <!-- If path and size is given, DS script will create a reserve file with given size. It can be later used
+         in case server is experiencing low disk space. In such case, this file can be deleted to claim some space.
+         Reserve file is created only when you specify a valid file path and size
+         example: <ReserveFile Path="C:\Reserved.RSV" SizeMB="1024" /> 
+    -->
+    <ReserveFile Path="" SizeMB="" />
+    
+
+    <!-- If external time server name is given, it will be configured by DS script. Only one time server name
+         or IP address should be specified. If you do not specify any value (left blank), external time server
+         will not be configured. You must ensure that a valid time server name or IP is given.  -->
+    <ExternalTimeServer Name="" />
+
+
+    <!-- Creates OU structure as per CSC standards. Valid parameter values are given below:
+         CustomerType = Standard or MultiTenant
+         CustomerCode = recommended 3 letter customer code (refer to naming standards document)
+         If you do not specify any values, OU structures will not be created.
+         Note: If <ServerIsAdditionalDC> parameter is set to true, then setting values for <OUStructure>
+               parameter will have no effect and no OU structure will be created.   -->
+    <OUStructure CustomerType="" CustomerCode="" />
+
+
+    <!-- Specify whether the server where DS script will run is going to be first DC in a new forest.
+         You must specify a value for this parameter (true or false).
+         example: <ServerIsFirstDCInNewForest>false</ServerIsFirstDCInNewForest>
+         Note:  <ServerIsFirstDCInNewForest> and <ServerIsAdditionalDC> both cannot be set to true.
+         -->
+    <ServerIsFirstDCInNewForest>false</ServerIsFirstDCInNewForest>
+
+
+    <!-- Specify whether the server where DS script will run is Additional domain controller for existing
+         domain or not. Valid values are: true or false.
+         example: <ServerIsAdditionalDC>true</ServerIsAdditionalDC> 
+         Note:  <ServerIsFirstDCInNewForest> and <ServerIsAdditionalDC> both cannot be set to true. -->
+    <ServerIsAdditionalDC>true</ServerIsAdditionalDC>
+    
+
+    <!-- Specify whether CSC standard DC security baseline policies should be applied or not. Bydefault
+         these policies are applied to both domain as well as domain controller. If you do not wish
+         them to be applied, set corresponding attribute below to false.
+         
+         Note:  If <ServerIsAdditionalDC> is set to true then CSC standard DC security baseline policies
+         will not be applied. -->
+    <SecurityBaselinePolicies ConfigureDomainPolicy="true" ConfigureDomainControllerPolicy="true" />
+
+
+    <!-- Specify whether DS script should configure backup and enable backup maintenance. Default is yes.
+         Bydefault, backup volume path is C:\. You can set it to any other drive.
+         Valid values for 'Configure' and 'EnableBackupMaintenance' parameters are: true or false -->
+    <DSBackup Configure="true" EnableBackupMaintenance="true" BackupVolumePath="C:" />
+
+    <!-- If you wish to configure DNS forwarders, specify forwarders IP here. If you're specifying 
+        multiple IPs.IPs should be separated by commas (,). If you do not specify any values, DNS
+        forwarders will not be configured. -->
+    <DNSForwarders ForwardersIP="" />
+
+</DS>

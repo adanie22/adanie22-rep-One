@@ -1,0 +1,18 @@
+ObjectType,BaseGroupName,Scope,Description
+GPO,PERM-D-MWS-EditGPO,DomainLocal,Grant rights to edit GPOs in specfied OU
+user,PERM-D-MWS-CreateUser,DomainLocal,Grant rights to create Users in specified OU
+user,PERM-D-MWS-DeleteUser,DomainLocal,Grant rights to delete Users in specified OU
+user,PERM-D-MWS-FullControlUser,DomainLocal,Grant Full control over User objects in specified OU
+user,PERM-D-MWS-UnlockUserAcct,DomainLocal,Grant rights to unlock user accounts in specified OU
+user,PERM-D-MWS-ResetUserPwd,DomainLocal,Grant rights to reset user passwords in specified OU
+computer,PERM-D-MWS-CreateComp,DomainLocal,Grant rights to create Computer Objects in specified OU
+computer,PERM-D-MWS-DeleteComp,DomainLocal,Grant rights to delete Computer Objects in specified OU
+computer,PERM-D-MWS-FullControlComp,DomainLocal,Grant Full control over Computer objects in specified OU
+computer,PERM-D-MWS-LocalAdmin,DomainLocal,Grant Local admin rights to servers in specified OU
+computer,PERM-D-MWS-LocalAdmin,DomainLocal,Grant Local admin rights to workstations in specified OU
+computer,PERM-D-MWS-RemoteDesktop,DomainLocal,Grant Remote Desktop rights to servers in specified OU
+computer,PERM-D-MWS-RemoteDesktop,DomainLocal,Grant Remote Desktop rights to workstations in specified OU
+group,PERM-D-MWS-CreateGroup,DomainLocal,Grant rights to create groups in specified OU
+group,PERM-D-MWS-DeleteGroup,DomainLocal,Grant rights to create groups in specified OU
+group,PERM-D-MWS-ModifyGroupMembers,DomainLocal,Grant rights to modify group memberships in specified OU
+group,PERM-D-MWS-FullControlGroup,DomainLocal,Grant Full control over Group objects in specified OU

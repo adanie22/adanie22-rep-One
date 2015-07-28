@@ -1,0 +1,3 @@
+{49b08726-736b-471c-af44-a7882cc552d9} : MWS Domain Policy 20140915
+{BD6FFD6A-2094-4E7F-9FB8-382C1D978952} : MWS WS2012R2 Domain Controller Baseline 20140623
+{f4b545e5-4a1a-4248-bb5d-b9b9aeb6ae79} : MWS WS2012R2 Member Server Baseline Policy 20140916

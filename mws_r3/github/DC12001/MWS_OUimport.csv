@@ -1,0 +1,29 @@
+child_OU;parent_OU_RDN;DelegationTarget
+Administration;
+Admin Servers;OU=Administration
+KMS and AD Admin;OU=Admin Servers,OU=Administration;computer
+Admin Service Accounts;OU=Administration;user
+Permissions;OU=Administration;group
+Roles;OU=Administration;group
+Customer;
+Application Groups;OU=Customer
+Exchange;OU=Application Groups,OU=Customer;group
+SCCM;OU=Application Groups,OU=Customer;group
+SharePoint;OU=Application Groups,OU=Customer;group
+VDI;OU=Application Groups,OU=Customer;group
+Mobile Devices;OU=Customer;computer
+Replicated Users;OU=Customer;user
+Servers;OU=Customer
+Database;OU=Servers,OU=Customer;computer
+DirectAccess;OU=Servers,OU=Customer;computer
+Exchange;OU=Servers,OU=Customer;computer
+Lync;OU=Servers,OU=Customer;computer
+McAfee;OU=Servers,OU=Customer;computer
+SCCM;OU=Servers,OU=Customer;computer
+SCOM;OU=Servers,OU=Customer;computer
+SharePoint;OU=Servers,OU=Customer;computer
+VDI;OU=Servers,OU=Customer;computer
+Service Accounts;OU=Customer;user
+Workstations;OU=Customer;computer
+PC Devices;OU=Workstations,OU=Customer;computer
+VDI;OU=Workstations,OU=Customer;computer
