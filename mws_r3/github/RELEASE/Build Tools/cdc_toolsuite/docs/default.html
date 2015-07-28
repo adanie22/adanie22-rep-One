@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Default &mdash; TxfrTop  documentation</title>
+    
+    <link rel="stylesheet" href="_static/txfrtop.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="TxfrTop  documentation" href="index.html" />
+    <link rel="up" title="cdc" href="cdc.html" />
+    <link rel="next" title="compute Module" href="compute.html" />
+    <link rel="prev" title="Reporting" href="report.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="compute.html" title="compute Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="report.html" title="Reporting"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TxfrTop  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="cdc.html" accesskey="U">cdc</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="default">
+<h1>Default<a class="headerlink" href="#default" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-cdc.default">
+<span id="default-module"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">default</span></code> Module<a class="headerlink" href="#module-cdc.default" title="Permalink to this headline">¶</a></h2>
+<p>Included in all modules that connect to Agility, loads rest api connection details from <cite>settings.json</cite> file
+into global variable dictionary <cite>CFG</cite>.</p>
+</div>
+<div class="section" id="settings-json">
+<span id="id1"></span><h2>Settings_json<a class="headerlink" href="#settings-json" title="Permalink to this headline">¶</a></h2>
+<p>The settings file has follwing format:</p>
+<div class="highlight-python"><div class="highlight"><pre>{
+    &quot;DEFAULT&quot;: &quot;AWS_DEV&quot;,
+    &quot;CDC_DEV&quot;: {
+        &quot;USER&quot;: &quot;USER&quot;,
+        &quot;PASSWD&quot;: &quot;PASS&quot;,
+        &quot;BASE_URL&quot;: &quot;https://127.0.0.1:8443/agility/api/current&quot;,
+        &quot;MAXN&quot;: 2
+    },..
+}
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="index.html">
+  <img class="logo" src="_static/logo.png" alt="Logo"/>
+</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Default</a><ul>
+<li><a class="reference internal" href="#module-cdc.default"><code class="docutils literal"><span class="pre">default</span></code> Module</a></li>
+<li><a class="reference internal" href="#settings-json">Settings_json</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="cdc.html">cdc</a><ul>
+      <li>Previous: <a href="report.html" title="previous chapter">Reporting</a></li>
+      <li>Next: <a href="compute.html" title="next chapter"><code class="docutils literal"><span class="pre">compute</span></code> Module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/default.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, The TxfrTop Team.
+      Created using <a href="http://sphinx.localhost/">Sphinx</a>.
+    </div>
+  </body>
+</html>

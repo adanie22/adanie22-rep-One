@@ -1,0 +1,21 @@
+﻿<?xml version="1.0"?>
+<SSLCertificates>
+    <Certificate Server="APP-001" FileLocation="\SSLCertificates\Wildcard.pfx" Password="" FriendlyName="MWS2R2 Wildcard" Store="cert:\LocalMachine\My;cert:\LocalMachine\Root;cert:\LocalMachine\SharePoint" ></Certificate>
+    <Certificate Server="APP-001" FileLocation="\SSLCertificates\OfficeApps.pfx" Password="" FriendlyName="MWS2R2 OfficeApps" Store="cert:\LocalMachine\Root" ></Certificate>
+
+    <Certificate Server="APP-002" FileLocation="\SSLCertificates\Wildcard.pfx" Password="" FriendlyName="MWS2R2 Wildcard" Store="cert:\LocalMachine\My;cert:\LocalMachine\Root;cert:\LocalMachine\SharePoint" ></Certificate>
+    <Certificate Server="APP-002" FileLocation="\SSLCertificates\OfficeApps.pfx" Password="" FriendlyName="MWS2R2 OfficeApps" Store="cert:\LocalMachine\Root" ></Certificate>
+
+    <Certificate Server="APP-003" FileLocation="\SSLCertificates\Wildcard.pfx" Password="" FriendlyName="MWS2R2 Wildcard" Store="cert:\LocalMachine\My;cert:\LocalMachine\Root;cert:\LocalMachine\SharePoint" ></Certificate>
+    <Certificate Server="APP-003" FileLocation="\SSLCertificates\OfficeApps.pfx" Password="" FriendlyName="MWS2R2 OfficeApps" Store="cert:\LocalMachine\Root" ></Certificate>
+
+    <Certificate Server="APP-004" FileLocation="\SSLCertificates\Wildcard.pfx" Password="" FriendlyName="MWS2R2 Wildcard" Store="cert:\LocalMachine\My;cert:\LocalMachine\Root;cert:\LocalMachine\SharePoint" ></Certificate>
+    <Certificate Server="APP-004" FileLocation="\SSLCertificates\OfficeApps.pfx" Password="" FriendlyName="MWS2R2 OfficeApps" Store="cert:\LocalMachine\Root" ></Certificate>
+
+    <Certificate Server="WEB-001" FileLocation="\SSLCertificates\Wildcard.pfx" Password="" FriendlyName="MWS2R2 Wildcard" Store="cert:\LocalMachine\My;cert:\LocalMachine\Root;cert:\LocalMachine\SharePoint" ></Certificate>
+    <Certificate Server="WEB-001" FileLocation="\SSLCertificates\OfficeApps.pfx" Password="" FriendlyName="MWS2R2 OfficeApps" Store="cert:\LocalMachine\Root" ></Certificate>
+
+    <Certificate Server="WEB-002" FileLocation="\SSLCertificates\Wildcard.pfx" Password="" FriendlyName="MWS2R2 Wildcard" Store="cert:\LocalMachine\My;cert:\LocalMachine\Root;cert:\LocalMachine\SharePoint" ></Certificate>
+    <Certificate Server="WEB-002" FileLocation="\SSLCertificates\OfficeApps.pfx" Password="" FriendlyName="MWS2R2 OfficeApps" Store="cert:\LocalMachine\Root" ></Certificate>
+
+</SSLCertificates>

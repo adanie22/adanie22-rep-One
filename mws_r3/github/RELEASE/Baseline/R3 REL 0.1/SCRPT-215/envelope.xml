@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - SQL Install SQL2012Ent Cluster</ns1:name>
+        <ns1:id>215</ns1:id>
+        <ns1:description>Install SQL Server and required DB instances</ns1:description>
+        <ns1:uuid>d5e2c134-f3d1-47c1-a61e-60a5ead190b8</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-03-11T20:58:16-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-03-31T20:14:02-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;Install-SQL2012.ps1&quot;
+    . .\Install\Install-SQL2012.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>10800</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>SQLINSTALLCONFIG_XML</ns1:name>
+            <ns1:id>290</ns1:id>
+            <ns1:description>Configuration file pointing SQL INI</ns1:description>
+            <ns1:uuid>0996f4ac-5946-4728-808d-d2ca59694353</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQLINSTALLCONFIG_XML</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>SQLINSTALLCONFIG_XML_localValue</ns1:name>
+                <ns1:href>propertytype/53</ns1:href>
+                <ns1:id>53</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>SQLINSTALLCONFIG_XML_localValue</ns1:name>
+                <ns1:id>53</ns1:id>
+                <ns1:uuid>9fbe5286-e962-4ec4-980a-e7f3094c2e0a</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>SQLINSTALLCONFIG_XML</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>true</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_SHARED_Primary.xml</ns1:name>
+                    <ns1:id>1061</ns1:id>
+                    <ns1:uuid>75874af6-00df-4f06-af0d-fd6afc105516</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_SHARED_Primary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_SHARED_Primary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_SHARED_Secondary.xml</ns1:name>
+                    <ns1:id>1062</ns1:id>
+                    <ns1:uuid>c040e8ef-0daf-4d9a-9c9c-26c8734a8236</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_SHARED_Secondary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_SHARED_Secondary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_SHAREPOINT_Primary.xml</ns1:name>
+                    <ns1:id>1063</ns1:id>
+                    <ns1:uuid>24c633cc-f1e7-4301-bdb7-77cfe3613217</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_SHAREPOINT_Primary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_SHAREPOINT_Primary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_SHAREPOINT_Secondary.xml</ns1:name>
+                    <ns1:id>1064</ns1:id>
+                    <ns1:uuid>b7c5f842-abc3-4823-8a62-86a68e523290</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_SHAREPOINT_Secondary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_SHAREPOINT_Secondary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_LYNC_Primary.xml</ns1:name>
+                    <ns1:id>1065</ns1:id>
+                    <ns1:uuid>22f2bcdb-ae71-4627-8c73-741f169b6afd</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_LYNC_Primary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_LYNC_Primary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_LYNC_Secondary.xml</ns1:name>
+                    <ns1:id>1066</ns1:id>
+                    <ns1:uuid>45f48870-668c-465d-a449-c91effd5b4b9</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_LYNC_Secondary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_LYNC_Secondary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>22691365-0dfb-4d87-b243-a8133cfcc39a</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>MWSREGISTRYXMLFILENAME</ns1:name>
+            <ns1:id>299</ns1:id>
+            <ns1:description>Location of Registyr xml file</ns1:description>
+            <ns1:uuid>fa0e3a3e-5ee7-48bf-b47d-c6b935321fdd</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>MWSREGISTRYXMLFILENAME</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>7868</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:stringValue>Install\MWSRegistry.xml</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>f31a6cf5-695d-465f-890f-971cd99c5c37</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

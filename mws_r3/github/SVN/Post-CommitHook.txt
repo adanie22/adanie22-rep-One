@@ -1,0 +1,19 @@
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: Get subversion arguments
+set repos=%~1
+set rev=%2
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: Only update the 'Deploy\deployScript' folder if the commit was done from the Generic/branches/Current branch
+
+E:\SVN\bin\svnlook.exe changed "E:\SVNRepositories\MWS2" | findstr /irc:"Generic/branches/Current.*"
+if %errorlevel%==0 (goto UPDATE)
+goto :END
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: Update the 'Deploy' folder with this changeset
+
+:UPDATE
+E:\TortoiseSVN\bin\svn.exe update E:\deploy\deployScript\ --quiet --non-interactive --trust-server-cert --username agilitydeploy --password M3sh@dmin! --config-dir E:\SVNRepositories\MWS2\conf
+
+:END

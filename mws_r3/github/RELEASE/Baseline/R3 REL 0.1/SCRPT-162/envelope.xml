@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - CM2012 - Prereqs Secondary</ns1:name>
+        <ns1:id>162</ns1:id>
+        <ns1:description>Delay count required as this script follows on from scripts that install Windows Features. Upon reboot Server Manager has to reinitialise.</ns1:description>
+        <ns1:uuid>89b65f01-733e-4d20-b018-786c893bbc50</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-02-19T19:34:01-06:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-21T07:23:48-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># Load Common functions
+. .\Logging.ps1
+. .\GlobalRepository.ps1
+. .\LaunchProcess.ps1
+. .\FilesUtility.ps1
+. .\PlatformUtils.ps1
+
+# get current script location
+$scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
+$scriptName = $MyInvocation.MyCommand.Name
+ 
+ConfigureLogging $scriptPath $scriptName
+ 
+#########################################################################
+# Main (Secondary Server only)
+#########################################################################
+
+#Use ArgList variable in Start-Process commands so embedded variables and env variables resolve
+#START.exe is used with msiexec otherwise it does not wait
+
+
+Log &quot;**** Starting: Secondary Pre-Reqs Config... ****&quot;
+Log &quot;`n&quot;
+
+
+Log &quot;Installing Windows 2012 Roles (WSUS)...&quot;
+Install-WindowsFeature -Name UpdateServices -IncludeManagementTools -LogPath &quot;$env:windir\Debug\ConfigMgr2012\$env:computername\$env:computername-Roles_WSUS.log&quot;
+If ($LastExitCode -ne 0) {Log &quot;ERROR: Failed to install WSUS Role. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+Start-Sleep -s 120
+
+Log &quot;Configure WSUS... (log file located under %windir%\tmpXXXX.tmp)&quot;
+$arglist = &quot;postinstall CONTENT_DIR=F:\WSUS&quot;		# WSUS hosted locally
+Start-Process -NoNewWindow -Wait -FilePath &quot;C:\Program Files\Update Services\Tools\wsusutil.exe&quot; -ArgumentList $arglist
+If ($LastExitCode -ne 0) {Log &quot;ERROR: Failed to configure WSUS. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+Start-Sleep -s 300
+
+Log &quot;    **WSUS is using the following DB:&quot;
+reg query &quot;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Update Services\Server\Setup&quot; /v SqlServerName
+Log &quot;`n&quot;
+
+
+Log &quot;**** Finished: Secondary Pre-Reqs Config... ****&quot;</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>300</ns1:delay>
+        <ns1:errorAction>Abort</ns1:errorAction>
+        <ns1:rebootRequired>true</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

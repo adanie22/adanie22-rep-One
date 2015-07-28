@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Export, Transform &amp; Load &mdash; TxfrTop  documentation</title>
+    
+    <link rel="stylesheet" href="_static/txfrtop.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="TxfrTop  documentation" href="index.html" />
+    <link rel="next" title="Blueprint Cleric" href="blueprint_cleric.html" />
+    <link rel="prev" title="Reporting" href="report.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="blueprint_cleric.html" title="Blueprint Cleric"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="report.html" title="Reporting"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TxfrTop  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="export-transform-load">
+<h1>Export, Transform &amp; Load<a class="headerlink" href="#export-transform-load" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="workflow">
+<h2>Workflow<a class="headerlink" href="#workflow" title="Permalink to this headline">¶</a></h2>
+<p>Designed for batch operations, currently run from test routines in <span class="xref std std-ref">test_etlxx</span>.</p>
+<p>Export, Transform, Load workflow is:</p>
+<p>1) Export: take trunk or branch from Code Repository, or
+export directly out of Agility using REST API into local Working Copy (WC).</p>
+<ol class="arabic simple" start="2">
+<li>Populate cdc_CIs.json for environment containers and stacks for new environment</li>
+<li>Transform WC using cdc_CIs.json as input.</li>
+<li>Check changes back into branch with tag.</li>
+<li>Import asset XML into new environment.</li>
+</ol>
+</div>
+<div class="section" id="running-export">
+<h2>Running Export<a class="headerlink" href="#running-export" title="Permalink to this headline">¶</a></h2>
+<p>eg running test case <code class="xref py py-func docutils literal"><span class="pre">test.test_etl.export_cdcCIs1_test_runner()</span></code> will export assets into folder structure, below. Note call on the class attribute, bp_export_cdcCIs1, rather than test function directly:</p>
+<div class="highlight-python"><div class="highlight"><pre>[dhatchett@localhost test]$ nosetests --nocapture --attr &quot;bp_export_cdcCIs1&quot;
+
+======================================================================================
+export_asset1, reads items in from cdc_CIscfg.json, where baseline == &quot;R3&quot;
+======================================================================================
+downloading zip damon test1 (143): https://20.148.76.21:8443/agility/api/v3.2/script/143/export?recursive=false&amp;deep=false to ../export/20150512T1653/SCRPT-143
+.
+======================================================================================
+export_asset1, reads items in from cdc_CIscfg.json, where baseline == &quot;R3&quot;
+======================================================================================
+downloading zip damon test1 (33): https://20.148.76.21:8443/agility/api/v3.2/package/33/export?recursive=false&amp;deep=false to ../export/20150512T1653/PKG-33
+.
+======================================================================================
+export_asset1, reads items in from cdc_CIscfg.json, where baseline == &quot;R3&quot;
+======================================================================================
+downloading zip Damon test1 (1431): https://20.148.76.21:8443/agility/api/v3.2/blueprint/1431/export?recursive=false&amp;deep=false to ../export/20150512T1653/BP-1431
+.
+----------------------------------------------------------------------
+Ran 3 tests in 1.484s
+
+OK
+[dhatchett@localhost test]$
+[dhatchett@localhost test]$ find ../export/
+../export/
+../export/20150512T1653
+../export/20150512T1653/BP-1431
+../export/20150512T1653/BP-1431/envelope.xml
+../export/20150512T1653/SCRPT-143
+../export/20150512T1653/SCRPT-143/envelope.xml
+../export/20150512T1653/PKG-33
+../export/20150512T1653/PKG-33/envelope.xml
+[dhatchett@localhost test]$
+</pre></div>
+</div>
+</div>
+<div class="section" id="report-parameter-file-cdc-cis-json">
+<span id="cdc-cis-json"></span><h2>Report Parameter File: cdc_CIs_json<a class="headerlink" href="#report-parameter-file-cdc-cis-json" title="Permalink to this headline">¶</a></h2>
+<p>To support batch running, reports, extraction routines, use configuration file <em>cdc_CIs.json</em>, of below format:</p>
+<div class="highlight-python"><div class="highlight"><pre>{
+    &quot;blueprints&quot;: {
+        &quot;143a&quot;: {&quot;CID&quot;:1,&quot;SCID&quot;:2,&quot;BASELINE&quot;:[&quot;PRY_R3&quot;]},
+        &quot;1431&quot;: {&quot;CID&quot;:&quot;TEST&quot;,&quot;SCID&quot;:&quot;DH&quot;,&quot;BASELINE&quot;:[&quot;PRY_R3&quot;]},
+        &quot;330&quot;:  {&quot;CID&quot;:&quot;MAS&quot;,&quot;SCID&quot;:&quot;FARM&quot;,&quot;BASELINE&quot;:[&quot;PRY_R3&quot;]}
+    },..
+}
+</pre></div>
+</div>
+<p>A selection of test routines using cdc_CIs:</p>
+<p><code class="xref py py-func docutils literal"><span class="pre">test.test_etl.export_all1_test_runner()</span></code></p>
+<p><code class="xref py py-func docutils literal"><span class="pre">test.test_report.xls_s_report1()</span></code></p>
+<p>The consumer of a list of ID&#8217;s gathered from above will be eg, the get_assets function</p>
+<p><code class="xref py py-func docutils literal"><span class="pre">cdc.blueprints.get_assets()</span></code></p>
+</div>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="blueprint_cleric.html">Blueprint Cleric</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="blueprint_cleric.html#roffes-export-utility">Roffes&#8217; export utility</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="index.html">
+  <img class="logo" src="_static/logo.png" alt="Logo"/>
+</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Export, Transform &amp; Load</a><ul>
+<li><a class="reference internal" href="#workflow">Workflow</a></li>
+<li><a class="reference internal" href="#running-export">Running Export</a></li>
+<li><a class="reference internal" href="#report-parameter-file-cdc-cis-json">Report Parameter File: cdc_CIs_json</a></li>
+<li><a class="reference internal" href="#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="report.html" title="previous chapter">Reporting</a></li>
+      <li>Next: <a href="blueprint_cleric.html" title="next chapter">Blueprint Cleric</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/etl.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, The TxfrTop Team.
+      Created using <a href="http://sphinx.localhost/">Sphinx</a>.
+    </div>
+  </body>
+</html>

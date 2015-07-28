@@ -1,0 +1,13 @@
+﻿<doc>
+  <processToLaunch FullFileName="InstallMedia_SQL\Setup.exe" CmdLineArgument="/ConfigurationFile=Install\Shared\ConfigurationFile_MWSPCDEVICES01_Primary.INI"></processToLaunch>
+  <processToLaunch FullFileName="InstallMedia_SQL\Setup.exe" CmdLineArgument="/ConfigurationFile=Install\Shared\ConfigurationFile_MWSVDS02_Primary.INI"></processToLaunch>
+  <processToLaunch FullFileName="InstallMedia_SQL\Setup.exe" CmdLineArgument="/ConfigurationFile=Install\Shared\ConfigurationFile_MWSAPPSENSE03_Primary.INI"></processToLaunch>
+  <processToLaunch FullFileName="InstallMedia_SQL\Setup.exe" CmdLineArgument="/ConfigurationFile=Install\Shared\ConfigurationFile_MWSMOBILITY04_Primary.INI"></processToLaunch>
+  <processToLaunch FullFileName="InstallMedia_SQL\Setup.exe" CmdLineArgument="/ConfigurationFile=Install\Shared\ConfigurationFile_MWSSSRS05_Primary.INI"></processToLaunch>
+  <!-- Only required for very large implementations, 25K+ users.
+  <processToLaunch FullFileName="InstallMedia_SQL\Setup.exe" CmdLineArgument="/ConfigurationFile=Install\Shared\ConfigurationFile_MWSTDT06_Primary.INI"></processToLaunch>
+  -->
+  <processToLaunch FullFileName="InstallMedia_SQL\Setup.exe" CmdLineArgument="/ConfigurationFile=Install\Shared\ConfigurationFile_MWSSCOM07_Primary.INI"></processToLaunch>
+  <processToLaunch FullFileName="InstallMedia_SQL\Setup.exe" CmdLineArgument="/ConfigurationFile=Install\Shared\ConfigurationFile_MWSFIM19_Primary.INI"></processToLaunch>
+  <processToLaunch FullFileName="InstallMedia_SQL\Setup.exe" CmdLineArgument="/ConfigurationFile=Install\Shared\ConfigurationFile_MWSPCDEVICES20_Primary.INI"></processToLaunch>
+</doc>

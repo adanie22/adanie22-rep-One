@@ -1,0 +1,2324 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - Get App Files</ns1:name>
+        <ns1:id>244</ns1:id>
+        <ns1:description>Copies application files from the nominated network share to the target VM.</ns1:description>
+        <ns1:uuid>e1b3ea17-f27b-44c4-bd71-8c5b5e4ef782</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-04-28T00:51:06-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-04-28T00:58:09-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>9e7fcc13-4d05-4591-a6bf-4640b548e17f</ns1:slot>
+        <ns1:version>5</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment>updated to use LoggingV2</ns1:publishComment>
+        <ns1:slotId>146</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># MWS2 - Get App Files ##############################################################
+# Author: Marina Krynina
+# Desc:   Deploys installation files onto the target server
+############################################################################################
+
+# Mandatory heading
+# Load Common functions
+. .\GlobalRepository.ps1
+. .\VariableUtility.ps1
+. .\FilesUtility.ps1
+. .\LaunchProcess.ps1
+
+#########################################################################
+# Main 
+# - Deploys installation files onto the target server
+#########################################################################
+try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;GetAppFiles.ps1&quot;
+
+    log &quot;INFO: Getting variables values or setting defaults if the variables are not populated.&quot;
+    $sourceFolders = (Get-VariableValue $SOURCE &quot;&quot; $false) 
+
+    foreach($srcFolder in ($sourceFolders.Replace(&quot; &quot;, &quot;&quot;)).Split(&quot;,&quot;))
+    {
+        log &quot;INFO: Deploying $srcFolder folder onto the target VM&quot;
+        get-appfiles $srcFolder    
+    }
+
+    log &quot;INFO: Finished $msg.&quot;
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>SOURCE</ns1:name>
+            <ns1:id>425</ns1:id>
+            <ns1:description>Folder on a network share where install files and supporting scripts are stored. The content of the folder will be copied onto a target server.</ns1:description>
+            <ns1:uuid>d640684d-9a85-43f9-9644-f913757eacee</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SOURCE</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>1db54451-3f1d-4aee-b3e7-48b9fba6a375</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - Extract App Files</ns1:name>
+        <ns1:id>245</ns1:id>
+        <ns1:description>Extracts ISO, ZIP application files using 7zip in the given folder including subfolders</ns1:description>
+        <ns1:uuid>9b1babf8-be8f-436e-8ae8-b6e0ec66233a</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-04-28T00:58:27-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-04-28T01:00:03-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>5dba46a3-47e8-4044-a6d6-db71eb781028</ns1:slot>
+        <ns1:version>5</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment>updated to use LoggingV2</ns1:publishComment>
+        <ns1:slotId>147</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># MWS2R2 - Extract App Files ###############################################################
+# Author: Marina Krynina
+# Desc:   Extracts application files (ISO, ZIP)
+############################################################################################
+
+# Mandatory heading
+# Load Common functions
+. .\GlobalRepository.ps1
+. .\VariableUtility.ps1
+. .\FilesUtility.ps1
+. .\LaunchProcess.ps1
+
+#########################################################################
+# Main 
+#########################################################################
+try
+{
+    # Folder structure in the Global Repository
+    # \Global Repository
+    #	\$SOURCE,  folder name in the Global Repository
+
+    # Folder structure on VM
+    # C:\Users\InstallerAccount
+    #		\$INSTALL_MEDIA - the content of the isntall media will be extracted here
+
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;ExtractAppFiles.ps1&quot;
+
+    log &quot;INFO: Getting variables values or setting defaults if the variables are not populated.&quot;
+    $installMedia = (Get-VariableValue $INSTALL_MEDIA &quot;&quot; $false) 
+
+    # Extracting
+    $msg = &quot;Extracting application installation files&quot;
+    log &quot;INFO: Starting $msg&quot;
+    
+    # 7za920.exe does not support ISO files, 7z.exe does.
+    # 7z files are located in the Common folder and copied by default
+    $extractionTool = &quot;$scriptPath\7z.exe&quot;
+
+	foreach($srcFolder in ($installMedia.Replace(&quot; &quot;, &quot;&quot;)).Split(&quot;,&quot;))
+    {
+ 
+      if (([string]::IsNullOrEmpty($installMedia)) -eq $true)
+      {
+          $installMediaSource = &quot;$scriptPath&quot;
+      }
+      else
+      {
+          $installMediaSource = &quot;$scriptPath\$srcFolder&quot;
+      }
+      
+      Extract $extractionTool $installMediaSource
+	}
+
+	log &quot;INFO: Finished $msg.&quot;
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>INSTALL_MEDIA</ns1:name>
+            <ns1:id>426</ns1:id>
+            <ns1:description>Folder name where installation media is located.</ns1:description>
+            <ns1:uuid>47d2e14d-8a2c-4888-a8c5-ed5ab2c2a421</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>INSTALL_MEDIA</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>bc307644-db80-42ec-a3c4-91d263a50d59</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - SQL Windows Configure</ns1:name>
+        <ns1:id>167</ns1:id>
+        <ns1:description>Perform Windows Configuration such as activating a Windows feature required by SQL Clustering</ns1:description>
+        <ns1:uuid>31e836c3-3434-453b-b980-d0f29899e986</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-02-20T01:41:59-06:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-03-15T03:46:54-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;ConfigureWindowsFeature.ps1&quot;
+    . .\ConfigureWindowsFeature.ps1
+
+    . .\ConfigureMWS2Registry.ps1
+    CreateCustomNodes $MWSREGISTRYXMLFILENAME
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>WINDOWSFEATUREXMLFILENAME</ns1:name>
+            <ns1:id>254</ns1:id>
+            <ns1:description>Filename describing which features to activate</ns1:description>
+            <ns1:uuid>73d6bed1-514e-4dc3-bc22-5888e036bd14</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>WINDOWSFEATUREXMLFILENAME</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>6444</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:stringValue>Install\WindowsFeatures.xml</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>587ea33b-f491-44d0-bdbb-d0c6fb03a6a6</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>MWSREGISTRYXMLFILENAME</ns1:name>
+            <ns1:id>288</ns1:id>
+            <ns1:description>XML file for MWS registry</ns1:description>
+            <ns1:uuid>a4c226ef-0d59-4d90-be76-8baf291bd21c</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>MWSREGISTRYXMLFILENAME</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>6431</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:stringValue>Install\MWSRegistry.xml</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>786e5d53-b43b-4cd2-a837-35612bdb4df1</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - Configure Windows Users</ns1:name>
+        <ns1:id>239</ns1:id>
+        <ns1:description>Configure Windows Users</ns1:description>
+        <ns1:uuid>02785e1c-5477-490f-a9a6-1950a5fe6c70</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-04-20T08:18:09-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-04-22T01:50:53-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;ExecuteWindowsUsers.ps1&quot;
+    . .\ExecuteWindowsUsers.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      </ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - Configure SPNs</ns1:name>
+        <ns1:id>241</ns1:id>
+        <ns1:description>Register SPNs</ns1:description>
+        <ns1:uuid>5bf998e7-4c6b-4989-827d-b9906f07654e</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-04-23T09:27:06-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-04-23T09:31:27-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;ExecuteSPNs.ps1&quot;
+    . .\ExecuteSPNs.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      </ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>SPNXMLFILE</ns1:name>
+            <ns1:id>415</ns1:id>
+            <ns1:description>XML file containing SPNs to register</ns1:description>
+            <ns1:uuid>6f977c13-9c63-4bc2-be4e-34b16cf66c29</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SPNXMLFILE</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>SPNXMLFILE_localValue</ns1:name>
+                <ns1:href>propertytype/86</ns1:href>
+                <ns1:id>86</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>SPNXMLFILE_localValue</ns1:name>
+                <ns1:id>86</ns1:id>
+                <ns1:uuid>61d16287-4168-461e-818c-6b769a99376b</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>SPNXMLFILE</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>true</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>Install\SPN_SharedDB.xml</ns1:name>
+                    <ns1:id>3908</ns1:id>
+                    <ns1:uuid>8ae5dc44-4d3b-4700-b0a3-fec77cb35028</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SPN_SharedDB.xml</ns1:displayName>
+                    <ns1:value>Install\SPN_SharedDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SPN_SharePointDB.xml</ns1:name>
+                    <ns1:id>3909</ns1:id>
+                    <ns1:uuid>5df6b566-7d5c-417d-a4db-16f0c51bd7cc</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SPN_SharePointDB.xml</ns1:displayName>
+                    <ns1:value>Install\SPN_SharePointDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SPN_LyncDB.xml</ns1:name>
+                    <ns1:id>3910</ns1:id>
+                    <ns1:uuid>060bd3be-704f-4b0d-8454-6f7f6dbffded</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SPN_LyncDB.xml</ns1:displayName>
+                    <ns1:value>Install\SPN_LyncDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>81a62a21-b07c-4741-892e-332a2eb9adba</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - SQL PreStage Cluster</ns1:name>
+        <ns1:id>227</ns1:id>
+        <ns1:description>Prestage the AD Objects required by the Windows and SQL Cluster</ns1:description>
+        <ns1:uuid>437db8ba-633e-4933-a52f-75ad02ed13e0</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-04-08T22:40:24-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-04-09T01:33:59-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;ExecutePreStageClusterADObjects.ps1&quot;
+    . .\ExecutePreStageClusterADObjects.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      </ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>CLUSTERNAMES</ns1:name>
+            <ns1:id>384</ns1:id>
+            <ns1:description>Cluster names delimited by semi-colon eg CLN-001</ns1:description>
+            <ns1:uuid>cbace673-a442-4e13-b545-41441cc2ad86</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>CLUSTERNAMES</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>12575</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:stringValue>&lt;Enter Data&gt;</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>7f975a40-31fa-46ea-88e8-82ffe0cb12c5</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - SQL SCCM Requirements</ns1:name>
+        <ns1:id>248</ns1:id>
+        <ns1:description>Apply SCCM requirements to SQL DB servers</ns1:description>
+        <ns1:uuid>50049171-852a-42a1-88a8-995dc84b83b9</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-06T21:18:19-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-06T21:18:19-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;ExecuteApplySCCMRequirements.ps1&quot;
+    . .\ExecuteApplySCCMRequirements.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      </ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - SQL Configure</ns1:name>
+        <ns1:id>164</ns1:id>
+        <ns1:description>Parent SQL configuration script that will initiate configuration such as user permissions and SQL ports</ns1:description>
+        <ns1:uuid>da9f89ae-646a-4427-98c0-f408d8d6f33e</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-02-19T21:55:54-06:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-04-20T09:11:51-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;ExecuteSQLConfiguration.ps1&quot;
+    . .\Config\ExecuteSQLConfiguration.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>SQLPORTSXMLFILE</ns1:name>
+            <ns1:id>252</ns1:id>
+            <ns1:description>Filename of XML containing SQL Port configuration</ns1:description>
+            <ns1:uuid>78d6e77e-7877-4b66-b52f-79473db36502</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQLPORTSXMLFILE</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>SQLPORTSXMLFILE_localValue</ns1:name>
+                <ns1:href>propertytype/47</ns1:href>
+                <ns1:id>47</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>SQLPORTSXMLFILE_localValue</ns1:name>
+                <ns1:id>47</ns1:id>
+                <ns1:uuid>3f679a81-c8bf-4a23-838e-5df4a18c6f0f</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>SQLPORTSXMLFILE</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>true</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLPorts_SharedDB.xml</ns1:name>
+                    <ns1:id>3885</ns1:id>
+                    <ns1:uuid>82337364-c7a8-485c-b65f-dbf0e21cbe42</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLPorts_SharedDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLPorts_SharedDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLPorts_SharePointDB.xml</ns1:name>
+                    <ns1:id>3886</ns1:id>
+                    <ns1:uuid>865d0456-22a3-45dc-9cdd-9a4b73913ff4</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLPorts_SharePointDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLPorts_SharePointDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLPorts_LyncDB.xml</ns1:name>
+                    <ns1:id>3887</ns1:id>
+                    <ns1:uuid>bd8af973-f37d-4b02-861e-d4b7b9f8dc77</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLPorts_LyncDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLPorts_LyncDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>3bbdbdca-4813-499b-b07c-6b2de14904ee</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>SQLUSERSXMLFILE</ns1:name>
+            <ns1:id>253</ns1:id>
+            <ns1:description>To be deleted DO NOT USE</ns1:description>
+            <ns1:uuid>f0ee166b-790b-4313-b7d0-783702cd4dc8</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQLUSERSXMLFILE</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>SQLUSERSXMLFILE_localValue</ns1:name>
+                <ns1:href>propertytype/48</ns1:href>
+                <ns1:id>48</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>SQLUSERSXMLFILE_localValue</ns1:name>
+                <ns1:id>48</ns1:id>
+                <ns1:uuid>cb6c9911-b870-4b32-8c41-2a7b001bc1a6</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>SQLUSERSXMLFILE</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>true</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLUsers_SharedDB.xml</ns1:name>
+                    <ns1:id>3888</ns1:id>
+                    <ns1:uuid>71b263e8-5b1e-4191-a4f1-19812a08de59</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLUsers_SharedDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLUsers_SharedDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLUsers_SharePointDB.xml</ns1:name>
+                    <ns1:id>3889</ns1:id>
+                    <ns1:uuid>baad5876-0e48-46ef-82e2-500e9f8b2284</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLUsers_SharePointDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLUsers_SharePointDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLUsers_LyncDB.xml</ns1:name>
+                    <ns1:id>3890</ns1:id>
+                    <ns1:uuid>9469c07f-6f5b-4ab0-8e44-efb9f1b0a8d1</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLUsers_LyncDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLUsers_LyncDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>a480b972-ce83-41ca-989f-4a7913299538</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>GENERICSERVICEXMLFILE</ns1:name>
+            <ns1:id>303</ns1:id>
+            <ns1:description>Generic cluster services xml file</ns1:description>
+            <ns1:uuid>0247cd6c-3eb7-4a97-8aef-1624c6eff118</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>GENERICSERVICEXMLFILE</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>9203</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>GENERICSERVICEXMLFILE_localValue</ns1:name>
+                    <ns1:href>/propertytype/55</ns1:href>
+                    <ns1:id>55</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:stringValue>Config\ClusterServices_SharedDB.xml</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>GENERICSERVICEXMLFILE_localValue</ns1:name>
+                <ns1:href>propertytype/55</ns1:href>
+                <ns1:id>55</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>GENERICSERVICEXMLFILE_localValue</ns1:name>
+                <ns1:id>55</ns1:id>
+                <ns1:uuid>ed82b917-74dc-4aca-9e7d-139ed26ea87d</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>GENERICSERVICEXMLFILE</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>true</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>Config\ClusterServices_SharedDB.xml</ns1:name>
+                    <ns1:id>3891</ns1:id>
+                    <ns1:uuid>947cae67-e936-4f68-9d94-c51d1c7dc248</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\ClusterServices_SharedDB.xml</ns1:displayName>
+                    <ns1:value>Config\ClusterServices_SharedDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Config\ClusterServices_SharePointDB.xml</ns1:name>
+                    <ns1:id>3892</ns1:id>
+                    <ns1:uuid>fa65873a-9e2f-42bc-8664-27decae7aa55</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\ClusterServices_SharePointDB.xml</ns1:displayName>
+                    <ns1:value>Config\ClusterServices_SharePointDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Config\ClusterServices_LyncDB.xml</ns1:name>
+                    <ns1:id>3893</ns1:id>
+                    <ns1:uuid>cdcbc6eb-d8ce-420a-ac65-94264dd7ed1c</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\ClusterServices_LyncDB.xml</ns1:displayName>
+                    <ns1:value>Config\ClusterServices_LyncDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>1b6ebc5c-7bd4-4c86-ac9a-7f57fe4676b3</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>SQLMEMORYXMLFILE</ns1:name>
+            <ns1:id>397</ns1:id>
+            <ns1:description>Filename of XML containing SQL Min/Max Memory configuration</ns1:description>
+            <ns1:uuid>c9c20ab1-a90f-41ea-84c0-fff084d33007</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQLMEMORYXMLFILE</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>SQLMEMORYXMLFILE_localValue</ns1:name>
+                <ns1:href>propertytype/81</ns1:href>
+                <ns1:id>81</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>SQLMEMORYXMLFILE_localValue</ns1:name>
+                <ns1:id>81</ns1:id>
+                <ns1:uuid>248eb88c-5c87-4c8a-9fcb-2110270f3515</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>SQLMEMORYXMLFILE</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>true</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLMemory_SharedDB.xml</ns1:name>
+                    <ns1:id>3894</ns1:id>
+                    <ns1:uuid>5f2e6bce-c077-4c85-84de-6aa2a89d8eec</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLMemory_SharedDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLMemory_SharedDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLMemory_SharePointDB.xml</ns1:name>
+                    <ns1:id>3895</ns1:id>
+                    <ns1:uuid>b5a8ca56-a0f2-4c8e-9c9e-3f4d9fa62750</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLMemory_SharePointDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLMemory_SharePointDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLMemory_LyncDB.xml</ns1:name>
+                    <ns1:id>3896</ns1:id>
+                    <ns1:uuid>7774db3f-d3c0-433c-9469-72986c7405d4</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLMemory_LyncDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLMemory_LyncDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>17d9e549-4cc2-41e7-aec0-92ae7748e9b5</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - Configure Shared Disk</ns1:name>
+        <ns1:id>194</ns1:id>
+        <ns1:description>Initialise, Partition and Format the shared disks</ns1:description>
+        <ns1:uuid>71e37bed-2e86-4f27-933a-8ebd7b3e414b</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-02-24T10:56:39-06:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-03-23T22:30:13-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;ConfigureSharedDisks.ps1&quot;
+    . .\ConfigureSharedDisks.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      </ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>SHAREDDISKXMLFILENAME</ns1:name>
+            <ns1:id>280</ns1:id>
+            <ns1:description>XML file containing shared disks to be configued</ns1:description>
+            <ns1:uuid>42301c26-b037-490e-b40b-977983069489</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SHAREDDISKXMLFILENAME</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>SHAREDDISKXMLFILENAME_localValue</ns1:name>
+                <ns1:href>propertytype/51</ns1:href>
+                <ns1:id>51</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>SHAREDDISKXMLFILENAME_localValue</ns1:name>
+                <ns1:id>51</ns1:id>
+                <ns1:uuid>908ab146-097c-4880-9d4c-50f93fa618dd</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>SHAREDDISKXMLFILENAME</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>true</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>Install\Cluster\SharedDiskConfigSharedDB.xml</ns1:name>
+                    <ns1:id>824</ns1:id>
+                    <ns1:uuid>086fa68b-9fc7-4aa9-a4f7-66f444cfeb7c</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\Cluster\SharedDiskConfigSharedDB.xml</ns1:displayName>
+                    <ns1:value>Install\Cluster\SharedDiskConfigSharedDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\Cluster\SharedDiskConfigSharePointDB.xml</ns1:name>
+                    <ns1:id>825</ns1:id>
+                    <ns1:uuid>ab67ba74-82e8-4405-92e3-23d4d236f8d5</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\Cluster\SharedDiskConfigSharePointDB.xml</ns1:displayName>
+                    <ns1:value>Install\Cluster\SharedDiskConfigSharePointDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\Cluster\SharedDiskConfigLyncDB.xml</ns1:name>
+                    <ns1:id>826</ns1:id>
+                    <ns1:uuid>da08ba96-b598-4687-b54f-c57f1a70cbf1</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\Cluster\SharedDiskConfigLyncDB.xml</ns1:displayName>
+                    <ns1:value>Install\Cluster\SharedDiskConfigLyncDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>2265511b-8a2f-4731-9f2d-e015b36cc5c2</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>NUMBERSHAREDDISKS</ns1:name>
+            <ns1:id>289</ns1:id>
+            <ns1:description>Number of shared disks</ns1:description>
+            <ns1:uuid>3739bad2-3969-403f-8832-fa403041dbf7</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>NUMBERSHAREDDISKS</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>6432</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:stringValue>7</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>6cd7f691-57d2-4f21-af1b-8bec1dd58c50</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>MWSREGISTRYXMLFILENAME</ns1:name>
+            <ns1:id>292</ns1:id>
+            <ns1:description>XML file for MWS registry</ns1:description>
+            <ns1:uuid>b6b1ef3c-e9b2-44dc-ba1c-ef143aadd0c2</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>MWSREGISTRYXMLFILENAME</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>6774</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:stringValue>Install\MWSRegistry.xml</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>fac2dd05-4ee0-46a4-a496-37f8bd203aa2</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - Configure Windows Cluster</ns1:name>
+        <ns1:id>202</ns1:id>
+        <ns1:description>Configure a 2 node Windows Cluster</ns1:description>
+        <ns1:uuid>e204f776-7ac9-4010-a567-f14953860bf7</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-02-26T02:33:39-06:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-03-23T22:23:07-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;ExecuteWindowsCluster.ps1&quot;
+    . .\ExecuteWindowsCluster.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      </ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>SHAREDWINDOWSCLUSTERXMLFILENAME</ns1:name>
+            <ns1:id>283</ns1:id>
+            <ns1:description>Windows cluster xml file name</ns1:description>
+            <ns1:uuid>9168b444-035a-4514-9daa-33e813e6a852</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SHAREDWINDOWSCLUSTERXMLFILENAME</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>SHAREDWINDOWSCLUSTERXMLFILENAME_localValue</ns1:name>
+                <ns1:href>propertytype/52</ns1:href>
+                <ns1:id>52</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>SHAREDWINDOWSCLUSTERXMLFILENAME_localValue</ns1:name>
+                <ns1:id>52</ns1:id>
+                <ns1:uuid>ce2faa34-ee52-4af8-8d97-fae22bee89bd</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>SHAREDWINDOWSCLUSTERXMLFILENAME</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>true</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>Install\Cluster\WindowsClusterSharedDB.xml</ns1:name>
+                    <ns1:id>819</ns1:id>
+                    <ns1:uuid>53a9e033-7053-4a70-a6dc-40299aed599f</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\Cluster\WindowsClusterSharedDB.xml</ns1:displayName>
+                    <ns1:value>Install\Cluster\WindowsClusterSharedDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\Cluster\WindowsClusterShptDB.xml</ns1:name>
+                    <ns1:id>820</ns1:id>
+                    <ns1:uuid>3cebeb5f-1b83-4438-a985-0cecd1fe7f58</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\Cluster\WindowsClusterShptDB.xml</ns1:displayName>
+                    <ns1:value>Install\Cluster\WindowsClusterShptDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\Cluster\WindowsClusterLyncDB.xml</ns1:name>
+                    <ns1:id>821</ns1:id>
+                    <ns1:uuid>f92dc3c2-685f-401e-98b3-bc596ee4253d</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\Cluster\WindowsClusterLyncDB.xml</ns1:displayName>
+                    <ns1:value>Install\Cluster\WindowsClusterLyncDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>f9b87ec6-8fdf-4561-b20e-e6413fe094d1</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>MWSREGISTRYXMLFILENAME</ns1:name>
+            <ns1:id>293</ns1:id>
+            <ns1:description>XML file for MWS registry</ns1:description>
+            <ns1:uuid>36ee710b-1fd7-433d-8c74-b48290a40bd1</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>MWSREGISTRYXMLFILENAME</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>6775</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:stringValue>Install\MWSRegistry.xml</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>f5bf84cf-374c-4c51-946f-2acc5f93238b</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - SQL Install SQL2012Ent Cluster</ns1:name>
+        <ns1:id>215</ns1:id>
+        <ns1:description>Install SQL Server and required DB instances</ns1:description>
+        <ns1:uuid>d5e2c134-f3d1-47c1-a61e-60a5ead190b8</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-03-11T20:58:16-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-03-31T20:14:02-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;Install-SQL2012.ps1&quot;
+    . .\Install\Install-SQL2012.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>10800</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>SQLINSTALLCONFIG_XML</ns1:name>
+            <ns1:id>290</ns1:id>
+            <ns1:description>Configuration file pointing SQL INI</ns1:description>
+            <ns1:uuid>0996f4ac-5946-4728-808d-d2ca59694353</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQLINSTALLCONFIG_XML</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>SQLINSTALLCONFIG_XML_localValue</ns1:name>
+                <ns1:href>propertytype/53</ns1:href>
+                <ns1:id>53</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>SQLINSTALLCONFIG_XML_localValue</ns1:name>
+                <ns1:id>53</ns1:id>
+                <ns1:uuid>9fbe5286-e962-4ec4-980a-e7f3094c2e0a</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>SQLINSTALLCONFIG_XML</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>true</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_SHARED_Primary.xml</ns1:name>
+                    <ns1:id>1061</ns1:id>
+                    <ns1:uuid>75874af6-00df-4f06-af0d-fd6afc105516</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_SHARED_Primary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_SHARED_Primary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_SHARED_Secondary.xml</ns1:name>
+                    <ns1:id>1062</ns1:id>
+                    <ns1:uuid>c040e8ef-0daf-4d9a-9c9c-26c8734a8236</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_SHARED_Secondary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_SHARED_Secondary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_SHAREPOINT_Primary.xml</ns1:name>
+                    <ns1:id>1063</ns1:id>
+                    <ns1:uuid>24c633cc-f1e7-4301-bdb7-77cfe3613217</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_SHAREPOINT_Primary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_SHAREPOINT_Primary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_SHAREPOINT_Secondary.xml</ns1:name>
+                    <ns1:id>1064</ns1:id>
+                    <ns1:uuid>b7c5f842-abc3-4823-8a62-86a68e523290</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_SHAREPOINT_Secondary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_SHAREPOINT_Secondary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_LYNC_Primary.xml</ns1:name>
+                    <ns1:id>1065</ns1:id>
+                    <ns1:uuid>22f2bcdb-ae71-4627-8c73-741f169b6afd</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_LYNC_Primary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_LYNC_Primary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Install\SQL2012SP2Ent_LYNC_Secondary.xml</ns1:name>
+                    <ns1:id>1066</ns1:id>
+                    <ns1:uuid>45f48870-668c-465d-a449-c91effd5b4b9</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Install\SQL2012SP2Ent_LYNC_Secondary.xml</ns1:displayName>
+                    <ns1:value>Install\SQL2012SP2Ent_LYNC_Secondary.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>22691365-0dfb-4d87-b243-a8133cfcc39a</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>MWSREGISTRYXMLFILENAME</ns1:name>
+            <ns1:id>299</ns1:id>
+            <ns1:description>Location of Registyr xml file</ns1:description>
+            <ns1:uuid>fa0e3a3e-5ee7-48bf-b47d-c6b935321fdd</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>MWSREGISTRYXMLFILENAME</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>7868</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:stringValue>Install\MWSRegistry.xml</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>f31a6cf5-695d-465f-890f-971cd99c5c37</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Package">
+        <ns1:name>MWS2R2 - SQL Cluster Install</ns1:name>
+        <ns1:id>43</ns1:id>
+        <ns1:description>Get, extract and install the SQL Server cluster, including dependencies. Then configure users and ports</ns1:description>
+        <ns1:uuid>a7295119-b24e-4d64-8036-81204efab813</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>package</ns1:name>
+            <ns1:href>assettype/3</ns1:href>
+            <ns1:id>3</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>skoklevski</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-02-18T19:53:46-06:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-06T21:22:27-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:version>-1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:versionStatus>inprogress</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:install>
+            <ns1:name>MWS2R2 - Get App Files</ns1:name>
+            <ns1:href>script/145</ns1:href>
+            <ns1:id>244</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+        <ns1:install>
+            <ns1:name>MWS2R2 - Extract App Files</ns1:name>
+            <ns1:href>script/146</ns1:href>
+            <ns1:id>245</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+        <ns1:install>
+            <ns1:name>MWS2R2 - SQL Windows Configure</ns1:name>
+            <ns1:href>script/167</ns1:href>
+            <ns1:id>167</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+        <ns1:install>
+            <ns1:name>MWS2R2 - Configure Windows Users</ns1:name>
+            <ns1:href>script/239</ns1:href>
+            <ns1:id>239</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+        <ns1:install>
+            <ns1:name>MWS2R2 - Configure SPNs</ns1:name>
+            <ns1:href>script/241</ns1:href>
+            <ns1:id>241</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+        <ns1:install>
+            <ns1:name>MWS2R2 - SQL PreStage Cluster</ns1:name>
+            <ns1:href>script/227</ns1:href>
+            <ns1:id>227</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+        <ns1:install>
+            <ns1:name>MWS2R2 - SQL SCCM Requirements</ns1:name>
+            <ns1:href>script/248</ns1:href>
+            <ns1:id>248</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - Get App Files</ns1:name>
+            <ns1:href>script/145</ns1:href>
+            <ns1:id>244</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - Extract App Files</ns1:name>
+            <ns1:href>script/146</ns1:href>
+            <ns1:id>245</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - SQL Configure</ns1:name>
+            <ns1:href>script/164</ns1:href>
+            <ns1:id>164</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - SQL Windows Configure</ns1:name>
+            <ns1:href>script/167</ns1:href>
+            <ns1:id>167</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - SQL SCCM Requirements</ns1:name>
+            <ns1:href>script/248</ns1:href>
+            <ns1:id>248</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - Configure Windows Users</ns1:name>
+            <ns1:href>script/239</ns1:href>
+            <ns1:id>239</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - Configure Shared Disk</ns1:name>
+            <ns1:href>script/194</ns1:href>
+            <ns1:id>194</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - Configure SPNs</ns1:name>
+            <ns1:href>script/241</ns1:href>
+            <ns1:id>241</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - SQL PreStage Cluster</ns1:name>
+            <ns1:href>script/227</ns1:href>
+            <ns1:id>227</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - Configure Windows Cluster</ns1:name>
+            <ns1:href>script/202</ns1:href>
+            <ns1:id>202</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:operational>
+            <ns1:name>MWS2R2 - SQL Install SQL2012Ent Cluster</ns1:name>
+            <ns1:href>script/215</ns1:href>
+            <ns1:id>215</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:operational>
+        <ns1:variable>
+            <ns1:name>SQLUSERSXMLFILE</ns1:name>
+            <ns1:id>411</ns1:id>
+            <ns1:description>Name of XML file containing user permissions</ns1:description>
+            <ns1:uuid>db535c30-290f-43a2-990a-fdf174a0c4ef</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQLUSERSXMLFILE</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>SQLUSERSXMLFILE_localValue</ns1:name>
+                <ns1:href>propertytype/84</ns1:href>
+                <ns1:id>84</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>SQLUSERSXMLFILE_localValue</ns1:name>
+                <ns1:id>84</ns1:id>
+                <ns1:uuid>6c9b1225-91a4-4f0b-a1e9-2d9d4f2b9ae8</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>SQLUSERSXMLFILE</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>true</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLUsers_SharedDB.xml</ns1:name>
+                    <ns1:id>4468</ns1:id>
+                    <ns1:uuid>a8946596-ac40-46bf-bbde-402e453eb79b</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLUsers_SharedDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLUsers_SharedDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLUsers_SharePointDB.xml</ns1:name>
+                    <ns1:id>4469</ns1:id>
+                    <ns1:uuid>8eef2c0c-3bb3-47da-abbf-a6af63dcb9e7</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLUsers_SharePointDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLUsers_SharePointDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>Config\SQLUsers_LyncDB.xml</ns1:name>
+                    <ns1:id>4470</ns1:id>
+                    <ns1:uuid>7ce2cfb0-f2cc-40eb-9eb6-9f7843579d54</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>Config\SQLUsers_LyncDB.xml</ns1:displayName>
+                    <ns1:value>Config\SQLUsers_LyncDB.xml</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>3f4e4c69-a7be-4ba4-a243-6abe84fca683</ns1:assetPropertyLinkId>
+        </ns1:variable>
+    </ns1:Asset>
+</ns1:Envelope>

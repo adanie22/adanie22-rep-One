@@ -1,0 +1,8 @@
+:mod:`xml` Module
+----------------------
+
+.. automodule:: cdc.xml
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

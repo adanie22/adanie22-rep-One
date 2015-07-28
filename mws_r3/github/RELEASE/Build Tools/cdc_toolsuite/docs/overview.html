@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tool Suite Overview &mdash; TxfrTop  documentation</title>
+    
+    <link rel="stylesheet" href="_static/txfrtop.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="TxfrTop  documentation" href="index.html" />
+    <link rel="next" title="Reporting" href="report.html" />
+    <link rel="prev" title="MWS_SaaS Documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="report.html" title="Reporting"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="MWS_SaaS Documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TxfrTop  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tool-suite-overview">
+<h1>Tool Suite Overview<a class="headerlink" href="#tool-suite-overview" title="Permalink to this headline">¶</a></h1>
+<p>This tool suite provides:</p>
+<ul class="simple">
+<li>.xls and .docx reports on Agility assets</li>
+<li>export/import functionality for assets</li>
+</ul>
+<div class="section" id="installing-the-tools">
+<h2>Installing the tools<a class="headerlink" href="#installing-the-tools" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="python-2-7-3">
+<h3>Python 2.7.3<a class="headerlink" href="#python-2-7-3" title="Permalink to this headline">¶</a></h3>
+<p>Python 2.7.3 with requests and lxml packages is built on build machine that includes the following packages (RHEL 2.6.18-398.el5)</p>
+<p>Build Machine requirements:</p>
+<ul class="simple">
+<li>openssl-devel.i386 0.9.8e-27.el5_10.4</li>
+<li>gcc.x86_64 4.1.2-55.el5</li>
+<li>Python-2.7.3.tar.bz2</li>
+<li>urllib3</li>
+<li>requests-2.5.3.tar.gz</li>
+<li>lxml-3.2.4.tgz</li>
+<li>xlrd</li>
+<li>xlwt</li>
+<li>python-docx</li>
+</ul>
+<p>Targe Machine requirements:</p>
+<ul class="simple">
+<li>libxslt-1.1.17-4.el5_8.3.x86_64.rpm</li>
+</ul>
+<p>Compiling on build machine:
+Extract Python and run configure:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd sw/tmp
+bzip2 -dc ../Python-2.7.3.tar.bz2  |tar x
+cd Python-2.7.3
+mkdir ../Python-2.7.3
+./configure --prefix=/home/dhatchett/sw/Python-2.7.3
+make install
+</pre></div>
+</div>
+<p>Above will give you:</p>
+<div class="highlight-python"><div class="highlight"><pre>file /home/dhatchett/Python-2.7.3/bin/python2.7: ELF 64-bit LSB executable, AMD x86-64, version 1 (SYSV), for GNU/Linux 2.6.9, dynamically linked (uses shared libs), not stripped
+</pre></div>
+</div>
+<p>Install package pre-requisites:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd ~/sw/tmp
+export PATH=~/Python-2.7.3/bin:$PATH
+tar -xf ../urllib3-1.10.2.tar.gz
+cd urllib3-1.10.2
+python setup.py install --home=~/Python-2.7.3/
+
+export PATH=~/Python-2.7.3/bin:$PATH
+tar -xf ../requests-2.5.3.tar.gz
+cd requests-2.5.3/
+python setup.py install --home=~/Python-2.7.3/
+
+cd ~/sw/tmp
+tar -xzf ../lxml-3.2.4.tgz
+cd lxml-3.2.4
+python setup.py install --home=~/Python-2.7.3/
+
+cd ~/sw/tmp
+tar -xf ~/sw/xlrd-0.9.2.tar.gz
+cd xlrd-0.9.2
+python setup.py install --home=~/Python-2.7.3/
+
+cd ~/sw/tmp
+unzip ~/sw/xlwt-master.zip
+cd xlwt-master
+python setup.py install --home=~/Python-2.7.3/
+
+cd ~/sw/tmp
+tar -xf ../python-docx-0.8.5.tar.gz
+cd python-docx-0.8.5
+python setup.py install --home=~/Python-2.7.3/
+</pre></div>
+</div>
+<p>Package Python-2.7.3:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd ~
+tar -czf sw/Python-2.7.3-`date +%Y%m%d`.tgz Python-2.7.3/
+</pre></div>
+</div>
+<p>Verify Package:</p>
+<div class="highlight-python"><div class="highlight"><pre>tar -tvf Python-2.7.3-20150523.tgz |grep &quot;lxml.*egg&quot;
+
+    Python-2.7.3/lib/python2.7/site-packages/lxml-3.2.4-py2.7.egg-info
+    Python-2.7.3/lib/python/lxml-3.2.4-py2.7.egg-info
+</pre></div>
+</div>
+<p>Above will create python 2.7.3 package suitable for running on RHEL 2.6.18-398.el5. To extract package, Python will be installed into users home directory on target machine:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd ~
+tar -xf ../sw/Python-2.7.3-20150523.tgz
+cd Python-2.7.3/
+ls
+    bin  include  lib  share
+</pre></div>
+</div>
+<p>Install libxslt on Target. As root:</p>
+<div class="highlight-python"><div class="highlight"><pre>rpm -i /home/dhatchett/sw/libxslt-1.1.17-4.el5_8.3.x86_64.rpm
+</pre></div>
+</div>
+<p>To run Python (reports, import/export tools etc), first add following to shell PATH:</p>
+<blockquote>
+<div>export PATH=~/Python-2.7.3/bin:$PATH</div></blockquote>
+</div>
+<div class="section" id="cdc-import-export-tools">
+<h3>CDC Import/Export Tools<a class="headerlink" href="#cdc-import-export-tools" title="Permalink to this headline">¶</a></h3>
+<p>Package tools on build machine:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd ~/mws_r3/dev
+ls
+    cdc  export  import  test
+
+tar -czf cdc-`date +%Y%m%d`.tgz cdc test
+</pre></div>
+</div>
+<p>Install on target:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd ~
+mkdir -p mws_r3/dev
+cd mws_r3/dev
+tar -xf ~/sw/cdc-20150523.tgz
+
+#verify
+find ./test/test_*
+./test/test_blueprints.py
+./test/test_blueprints.pyc
+./test/test_etl.py
+./test/test_etl.pyc
+./test/test_report.py
+./test/test_report.pyc
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="index.html">
+  <img class="logo" src="_static/logo.png" alt="Logo"/>
+</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tool Suite Overview</a><ul>
+<li><a class="reference internal" href="#installing-the-tools">Installing the tools</a><ul>
+<li><a class="reference internal" href="#python-2-7-3">Python 2.7.3</a></li>
+<li><a class="reference internal" href="#cdc-import-export-tools">CDC Import/Export Tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">MWS_SaaS Documentation</a></li>
+      <li>Next: <a href="report.html" title="next chapter">Reporting</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/overview.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2011, The TxfrTop Team.
+      Created using <a href="http://sphinx.localhost/">Sphinx</a>.
+    </div>
+  </body>
+</html>

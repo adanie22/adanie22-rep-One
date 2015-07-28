@@ -1,0 +1,9 @@
+﻿<?xml version="1.0"?>
+<SSLCertificates>
+    <Certificate Server="APP-005" FileLocation="\SSLCertificates\Wildcard.pfx" Password="" FriendlyName="MWS2R2 Wildcard" Store="cert:\LocalMachine\Root" ></Certificate>
+    <Certificate Server="APP-005" FileLocation="\SSLCertificates\OfficeApps.pfx" Password="" FriendlyName="MWS2R2 OfficeApps" Store="cert:\LocalMachine\My;cert:\LocalMachine\Root" ></Certificate>
+
+    <Certificate Server="APP-006" FileLocation="\SSLCertificates\Wildcard.pfx" Password="" FriendlyName="MWS2R2 Wildcard" Store="cert:\LocalMachine\Root" ></Certificate>
+    <Certificate Server="APP-006" FileLocation="\SSLCertificates\OfficeApps.pfx" Password="" FriendlyName="MWS2R2 OfficeApps" Store="cert:\LocalMachine\My;cert:\LocalMachine\Root" ></Certificate>
+
+</SSLCertificates>

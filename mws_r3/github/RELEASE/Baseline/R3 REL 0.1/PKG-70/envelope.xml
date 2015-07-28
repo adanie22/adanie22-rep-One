@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - AD Global Repository</ns1:name>
+        <ns1:id>268</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>bc995880-d1ef-4461-b817-f48a7a7a5c12</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-21T18:18:29-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-21T18:19:24-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>7890a1c9-2153-4224-9ca2-e73c1064ab06</ns1:slot>
+        <ns1:version>8</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>186</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># Support multiple deployment environments
+$environment = $ENVIRONMENT
+
+$script = @'
+Add-Type -AssemblyName System.Web
+
+function set-globalvariable($key,$val) {
+	__ENVCODE__
+	Invoke-WebRequest -Method PUT -Uri http://10.5.4.40:4001/v2/keys/$($key)?value=$([System.Web.HttpUtility]::UrlEncode($($val))) -UseBasicParsing
+}
+
+function get-globalvariable($key) {
+	__ENVCODE__
+	$resp = Invoke-RestMethod -Method GET -Uri http://10.5.4.40:4001/v2/keys/$key
+	return $resp.node
+}
+
+function get-globalvariable_json($key) {
+	__ENVCODE__
+	$resp = Invoke-RestMethod -Method GET -Uri http://10.5.4.40:4001/v2/keys/$key
+	return ConvertFrom-Json $resp.node.value
+}
+
+
+function connect-deploymentshare
+{
+    #$share = get-globalvariable 'Global/DeploymentShare'
+    #$username = get-globalvariable 'Global/DeploymentUsername'
+    #$password = get-globalvariable 'Global/DeploymentPassword'
+    
+    #$secure_pwd = convertto-securestring $password.value -asplaintext -force
+    
+    #$dcred = new-object -typename System.Management.Automation.PSCredential -argumentlist $username.value, $secure_pwd
+    #$d = New-PSDrive -Name 'Y' -PSProvider FileSystem -Root $share.value -Credential $dcred -Scope Global -persist 
+
+	# [DRidley] updated to utilise dynamic drive letter 'drv' &amp; NET USE instead, as New-PSDrive always fails when run a 2nd time
+	$share = 	(get-globalvariable(&quot;Global\DeploymentShare&quot;)).value
+    $username = (get-globalvariable(&quot;Global\DeploymentUsername&quot;)).value
+    $password = (get-globalvariable(&quot;Global\DeploymentPassword&quot;)).value
+    
+	$global:drv = dir function:[m-z]: -Name | Where { -Not (test-path $_ )} | select -first 1
+	$d = net use $drv $share /user:$username $password
+    
+    #If (Test-Path $drv) {Write-Host &quot;$drv = Yes&quot;} Else {Write-Host &quot;$drv = No&quot;; EXIT}
+}
+
+
+function disconnect-deploymentshare
+{
+    #$d = Remove-PSDrive -Name 'Y'
+    $d = net use $drv /delete
+}
+
+
+# Stiven: cater for the introduction of deploy folder subfolders as a result of introducing SVN
+#         assumption is computer related folders will always and only be in the deployScript folder
+function get-files($computer){
+    connect-deploymentshare
+    
+    # Copy Common Files
+    Copy-Item &quot;$drv\DeployScript\Common\*&quot; .\ -Recurse -force -Verbose
+    Copy-Item &quot;$drv\DeployInstall\Common\*&quot; .\ -Recurse -force -Verbose
+        
+    # Copy Computer Specific files
+    $c = $computer
+    if( Test-Path -Path (&quot;$drv\DeployScript\&quot; + $c)){
+    	$p = &quot;$drv\DeployScript\&quot; + $c + &quot;\*&quot;
+    	Copy-Item $p .\ -Recurse -force -Verbose
+    }else{
+    	write-output &quot;computername folder does not exist - $c&quot;
+    }
+    
+    disconnect-deploymentshare
+}
+
+
+function Get-AppFiles($appname){
+   connect-deploymentshare
+
+   $rootFolder = &quot;$drv\DeployScript\&quot;
+   Copy-Files $rootFolder $appname
+
+   $rootFolder = &quot;$drv\DeployInstall\&quot;
+   Copy-Files $rootFolder $appname
+
+   disconnect-deploymentshare
+}
+
+# Stiven: cater for the introduction of deploy folder subfolders as a result of introducing SVN
+function Copy-Files($rootfolder, $appname){
+    $p = $rootFolder + $appname + &quot;\*&quot;
+    if(Test-Path -Path ($rootFolder + $appname)){
+        Write-Output &quot;Copying Application files from $rootFolder$($appname)&quot;
+        Copy-Item $p .\ -Recurse -force
+    } Else {
+        Write-Error &quot;Application folder $appname does not exist&quot; -ErrorAction SilentlyContinue
+    }  
+}
+
+'@
+
+
+# Perform a replace on __ENVCODE__ to support multiple AD environments
+if($environment -eq $null){
+	write-output &quot;Generating script for default environment&quot;
+	$script = $script -replace &quot;__ENVCODE__&quot;,&quot;&quot;
+}else{
+	write-output &quot;Generating script for [$environment] environment&quot;
+	$newstring = $('$key= &quot;[' + $environment + ']/$key&quot;')
+    	$script = $script -replace &quot;__ENVCODE__&quot;,$newstring
+}
+
+$script | out-file &quot;GlobalRepository.ps1&quot;
+
+# Load Common functions
+#. .\GlobalRepository.ps1
+# download common files and computer specific files
+#get-files</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Abort</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>ENVIRONMENT</ns1:name>
+            <ns1:id>453</ns1:id>
+            <ns1:description></ns1:description>
+            <ns1:uuid>100213b6-cd6e-4f7d-8d1d-940cad781360</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>ENVIRONMENT</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>882764b4-65f6-4f47-a170-9934b4780aee</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - AD Rename Computer</ns1:name>
+        <ns1:id>262</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>fb548fad-cacb-49ef-a1fd-b82f84a3414f</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-20T22:13:28-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-20T22:14:08-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>c81389ef-c101-4448-a7e4-1804b50696c2</ns1:slot>
+        <ns1:version>4</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>187</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>#	ScriptName: 	AD Rename Computer
+#	Author: 	Mark Freeman
+#	Required Variables: COMPONENTID, INSTANCEID
+#	Description:
+#
+#	Renames a computer based on MWS2 naming standard
+#	Registers the computername and IP address in the key value store
+#	Downloads common and computer specific files from the deployment file share
+#	Resets the local administrator account password to a random value
+#	Registers the password in the key value share
+#	Updates the instance name in Cloud Provider
+#
+#	2015/05/21	DRidley		-Updated Rename Computer section to check if IstanceID has already been deployed
+
+
+. .\GlobalRepository.ps1
+
+
+$ComponentID = $COMPONENTID
+$InstanceID =  $INSTANCEID
+$DomainFQDN =  (get-globalvariable(&quot;Global\DomainFQDN&quot;)).value
+
+$CustomerID = (get-globalvariable &quot;Global/CustomerID&quot;).value
+$LocationID = (get-globalvariable &quot;Global/LocationID&quot;).value
+
+# Set Primary &amp; Secondary DNS on active NIC. This is required to check if InstanceID has already been deployed
+$PrimaryDNS =   (get-globalvariable(&quot;AD\PrimaryDNS&quot;)).value
+$SecondaryDNS = (get-globalvariable(&quot;AD\SecondaryDNS&quot;)).value
+$NICindex = Get-NetAdapter -physical | where status -eq 'up' | Select 'Name' -ExpandProperty ifIndex
+Write-Output &quot;Setting $PrimaryDNS and $SecondaryDNS as DNS servers on active NIC&quot;
+Set-DNSClientServerAddress -InterfaceIndex $NICindex -ServerAddresses ($PrimaryDNS,$SecondaryDNS)
+
+
+# Rename Computer
+$Computername = $($CustomerID + $ComponentID + $LocationID + $InstanceID + &quot;W&quot;)
+Write-Output &quot;Checking if $Computername has been previously deployed...&quot;
+If (Test-Connection -Computername &quot;$Computername.$DomainFQDN&quot; -Count 2 -Quiet)
+{
+	Write-Output &quot;ERROR: $Computername is already deployed! Exiting...&quot;
+	EXIT 1
+}
+Else
+{
+	Write-Output &quot;$ComponentID-$InstanceID does not appear to have been previously deployed. Continuing...&quot;
+	Write-Output &quot;Setting computername to $Computername&quot;
+	Rename-Computer -NewName $Computername -force
+}
+
+
+write-output &quot;Storing IP Address in key value store&quot;
+$key = 'Network/{0}' -f $Computername
+$ip = Get-NetIPAddress | Where-Object -FilterScript {$_.AddressFamily -eq &quot;IPv4&quot; } | Where-Object -FilterScript {$_.IPAddress -ne &quot;127.0.0.1&quot;}
+$ipa = $ip.IPAddress
+Set-globalvariable $key $ipa
+
+write-output &quot;Downloading common files and computer files from repository&quot;
+
+get-files &quot;$ComponentID$InstanceID&quot;
+
+write-output &quot;Resetting local administrator password&quot;
+. .\New-RandomPassword.ps1
+$password = new-randompassword -PasswordLength 10
+$adminUser = [ADSI] &quot;WinNT://./SOE-LOAD,User&quot;
+$adminUser.SetPassword($password)
+Set-globalvariable &quot;Administrator/$Computername&quot; $password
+
+#register name tag
+#write-output &quot;Registering AWS name tag&quot;
+#$aid  = Invoke-RestMethod -Uri http://169.254.169.254/latest/meta-data/instance-id
+#$uri = &quot;http://10.0.0.23:5000/p1/&quot; + $aid + &quot;?tagname=&quot; + $Computername 
+#Invoke-RestMethod -Uri $uri -Method Put
+
+
+write-output &quot;Restarting computer&quot;
+
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Abort</ns1:errorAction>
+        <ns1:rebootRequired>true</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>COMPONENTID</ns1:name>
+            <ns1:id>443</ns1:id>
+            <ns1:description>COMPONENTID</ns1:description>
+            <ns1:uuid>5158c63f-5af9-491c-96b4-81c97c7f86d5</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>COMPONENTID</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>de0200c9-8810-412c-8fd6-0c33775f9bdb</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>INSTANCEID</ns1:name>
+            <ns1:id>444</ns1:id>
+            <ns1:description>INSTANCEID</ns1:description>
+            <ns1:uuid>023e7fbf-a627-4a28-99f4-7d1cf65841de</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>INSTANCEID</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>24d648a9-5594-414a-8982-443a1d37910d</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R2 - AD Add To Domain</ns1:name>
+        <ns1:id>233</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>610a72d9-8165-4970-86f0-58ba43b6d6f3</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>mfreeman</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-04-16T20:07:22-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-04-16T20:12:30-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>d24bbade-b665-4ced-bb6a-397057153d30</ns1:slot>
+        <ns1:version>2</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>188</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>mfreeman</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active_checkedout</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>#	ScriptName: 	AD Add to Domain
+#	Author: 	Mark Freeman
+#	Required Variables: None
+#	Description:
+#
+#	Adds a computer to the MWS2 Resource Domain
+
+
+. .\GlobalRepository.ps1
+
+$domainname = (get-globalvariable &quot;Global\DomainFQDN&quot;).value
+$domainNB = (get-globalvariable &quot;Global\DomainNetBIOS&quot;).value
+$short_username = (get-globalvariable &quot;Global\DeploymentUsername&quot;).value
+$username = &quot;$domainNB\$short_username&quot;
+$password = (get-globalvariable &quot;Global\DeploymentPassword&quot;).value
+$dn = (get-globalvariable &quot;AD\DistinguishedName&quot;).value
+
+$pdns = (get-globalvariable &quot;AD\PrimaryDNS&quot;).value
+$sdns = (get-globalvariable &quot;AD\SecondaryDNS&quot;).value
+
+$computername = $env:COMPUTERNAME
+$ouPath = &quot;OU=servers,OU=customer,$dn&quot;
+
+if ($computername.ToLower().Contains(&quot;dbs&quot;)){
+    $ouPath=&quot;OU=Database,$ouPath&quot;
+}
+
+if ($computername.ToLower().Contains(&quot;mas&quot;)){
+    $ouPath=&quot;OU=Exchange,$ouPath&quot;
+}
+
+$na=Get-NetAdapter -Physical | where status -eq 'up'
+Set-DnsClientServerAddress -InterfaceIndex $na.ifIndex -ServerAddresses ($pdns,$sdns)
+
+$secure_pwd = convertto-securestring $password -asplaintext -force
+$djcred = new-object -typename System.Management.Automation.PSCredential `
+         -argumentlist $username, $secure_pwd
+
+Add-Computer -DomainName $domainname -Credential $djcred -OUPath $ouPath -Force
+write-output &quot;Joined domain.&quot;
+
+
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>true</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Package">
+        <ns1:name>MWS2R2 - AD Rename and Add to Domain</ns1:name>
+        <ns1:id>70</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>ec37297d-53c3-45c9-bcea-2e23a1ecb1cb</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>package</ns1:name>
+            <ns1:href>assettype/3</ns1:href>
+            <ns1:id>3</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2/MWS2_CDCR2</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2:#ID#8:#TYPE#VMContainer/MWS2_CDCR2:#ID#9:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>mfreeman</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-04-16T20:14:41-05:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-04-16T20:15:29-05:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2_CDCR2</ns1:name>
+            <ns1:href>project/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>4f2a9e8d-2a66-41b9-adfc-f19e59a3f24b</ns1:slot>
+        <ns1:version>3</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>185</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>mfreeman</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>versioned</ns1:versionStatus>
+        <ns1:checkoutAllowed>true</ns1:checkoutAllowed>
+        <ns1:headAllowed>true</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:install>
+            <ns1:name>MWS2R2 - AD Global Repository</ns1:name>
+            <ns1:href>script/228</ns1:href>
+            <ns1:id>268</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+        <ns1:install>
+            <ns1:name>MWS2R2 - AD Rename Computer</ns1:name>
+            <ns1:href>script/229</ns1:href>
+            <ns1:id>262</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+        <ns1:install>
+            <ns1:name>MWS2R2 - AD Add To Domain</ns1:name>
+            <ns1:href>script/230</ns1:href>
+            <ns1:id>233</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+        <ns1:variable>
+            <ns1:name>INSTANCEID</ns1:name>
+            <ns1:id>395</ns1:id>
+            <ns1:description></ns1:description>
+            <ns1:uuid>4111371c-dabc-4968-a162-91a02eff4f7f</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>INSTANCEID</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>12984</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:stringValue>001</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>a033d7a6-a3e2-46bc-88c1-4150cadc8c07</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>COMPONENTID</ns1:name>
+            <ns1:id>396</ns1:id>
+            <ns1:description>COMPONENTID</ns1:description>
+            <ns1:uuid>973b4d80-dc6b-412f-887a-d58de14b25d1</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>COMPONENTID</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>12985</ns1:id>
+                <ns1:name></ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:stringValue>LNC</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>4bd256a6-1c17-4f64-9c1d-29f4c27a614f</ns1:assetPropertyLinkId>
+        </ns1:variable>
+    </ns1:Asset>
+</ns1:Envelope>

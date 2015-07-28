@@ -1,0 +1,15 @@
+﻿<!--
+Ensure that Component ID and Instance ID are used and NOT server name
+The Account name will be replaced with the domain\service account for DB services always
+Set useFQDN="TRUE" if you need to register a SPN for the FQDN
+-->
+<doc>
+  <SPN Command="setspn -S MSSQLSvc/CNN-007:MWSSCOM07" Server="CNN-007" Account="svc_SQL" useFQDN="FALSE" ></SPN>  
+  <SPN Command="setspn -S MSSQLSvc/CNN-007:MWSSCOM07" Server="CNN-007" Account="svc_SQL" useFQDN="TRUE" ></SPN> 
+  
+  <SPN Command="setspn -S MSSQLSvc/CNN-007:49007" Server="CNN-007" Account="svc_SQL" useFQDN="FALSE" ></SPN>  
+  <SPN Command="setspn -S MSSQLSvc/CNN-007:49007" Server="CNN-007" Account="svc_SQL" useFQDN="TRUE" ></SPN>  
+  
+  <SPN Command="setspn -S http/CLG-400" Server="CLG-400" Account="svc_SQL" useFQDN="FALSE" ></SPN>  
+  <SPN Command="setspn -S http/CLG-400" Server="CLG-400" Account="svc_SQL" useFQDN="TRUE" ></SPN>  
+</doc>

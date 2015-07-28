@@ -1,0 +1,8 @@
+﻿<doc>
+  <WindowsFeature FeatureName="Web-Mgmt-Console"></WindowsFeature>  
+  <WindowsFeature FeatureName="RSAT-Clustering"></WindowsFeature>  
+  <WindowsFeature FeatureName="RSAT-Clustering-Mgmt"></WindowsFeature>  
+  <WindowsFeature FeatureName="RSAT-Clustering-PowerShell"></WindowsFeature>  
+  <WindowsFeature FeatureName="RSAT-Clustering-CmdInterface"></WindowsFeature>  
+  <WindowsFeature FeatureName="RPC-over-HTTP-proxy"></WindowsFeature>  
+</doc>
