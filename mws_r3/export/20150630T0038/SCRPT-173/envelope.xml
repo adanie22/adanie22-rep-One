@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - AD Assign Replicate Dir Changes</ns1:name>
+        <ns1:id>173</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>cffe73a8-6930-47eb-99ca-c2d9604b44c1</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>admin</ns1:name>
+            <ns1:href>user/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-20T11:30:33+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-20T11:31:09+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>59d14c28-ea0c-489f-bdfa-c6c5f9c5886d</ns1:slot>
+        <ns1:version>1</ns1:version>
+        <ns1:latest>true</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>135</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>admin</ns1:name>
+            <ns1:href>user/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>true</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows|2012</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># MWS2R2 -Assign Replicate Dir Changes ##################################################################
+# Author: Marina Krynina
+#################################################################################################
+try
+{
+	write-host &quot;INFO: Attempting to assign Replicate Directory Changes permission to $SVC_IDENTITY&quot;
+	$scriptPath = $env:USERPROFILE
+
+    . .\Assign-ReplicateDirChanges.ps1 -scriptPath $scriptPath -identity $SVC_IDENTITY
+
+	exit 0
+}
+catch
+{
+	write-host &quot;ERROR: $($_.Exception.Message)&quot;
+	exit 1
+}</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

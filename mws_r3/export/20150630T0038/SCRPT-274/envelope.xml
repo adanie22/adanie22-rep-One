@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - SQL SCCM Requirements</ns1:name>
+        <ns1:id>243</ns1:id>
+        <ns1:description>Apply SCCM requirements to SQL DB servers</ns1:description>
+        <ns1:uuid>50049171-852a-42a1-88a8-995dc84b83b9</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dhatchett2</ns1:name>
+            <ns1:href>user/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-26T22:46:48+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-29T15:21:30+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>0fa48ca7-7362-4abe-8458-adfcfb2b6402</ns1:slot>
+        <ns1:version>1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment>R3 REL 0.2</ns1:publishComment>
+        <ns1:slotId>161</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>sskoklev</ns1:name>
+            <ns1:href>user/10</ns1:href>
+            <ns1:id>10</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;ExecuteApplySCCMRequirements.ps1&quot;
+    . .\ExecuteApplySCCMRequirements.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      </ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

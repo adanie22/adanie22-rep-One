@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - CM2012 - Secondary Prereqs</ns1:name>
+        <ns1:id>379</ns1:id>
+        <ns1:description>Delay count required as this script follows on from scripts that install Windows Features. Upon reboot Server Manager has to reinitialise.</ns1:description>
+        <ns1:uuid>f829b435-ae5b-4d33-9891-84a26e6c7ade</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-06-22T17:32:09+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-06-22T17:35:42+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>16deaef2-fd4b-4638-8017-1f09f4bd1729</ns1:slot>
+        <ns1:version>2</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>183</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># Load Common functions
+. .\Logging.ps1
+. .\GlobalRepository.ps1
+. .\LaunchProcess.ps1
+. .\FilesUtility.ps1
+. .\PlatformUtils.ps1
+
+# get current script location
+$scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
+$scriptName = $MyInvocation.MyCommand.Name
+$PShEXE = 	  &quot;$PSHome\Powershell.exe&quot;
+ 
+ConfigureLogging $scriptPath $scriptName
+ 
+#########################################################################
+# Main (Secondary Server only)
+#########################################################################
+
+#Use ArgList variable in Start-Process commands so embedded variables and env variables resolve
+#START.exe is used with msiexec otherwise it does not wait
+
+
+Log &quot;**** Starting: Secondary Pre-Reqs Config... ****&quot;
+Log &quot;`n&quot;
+
+
+Log &quot;Modify 'Log On as a Service' User Rights...&quot;	# Required for WSUS Windows Feature to work
+$arglist = '+r SeServiceLogonRight -u SERVICE'
+$ret = Start-Process -NoNewWindow -Wait -PassThru -FilePath &quot;$ScriptPath\NTrights.exe&quot; -ArgumentList $arglist
+If ($ret.exitcode -ne 0) {Log &quot;ERROR: $ret.exitcode - Failed to modify Log On as a Service Rights. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+
+
+Log &quot;Installing Windows 2012 Roles (WSUS)...&quot;
+$Feature = Install-WindowsFeature -Name UpdateServices -IncludeManagementTools -LogPath &quot;$env:windir\Debug\ConfigMgr2012\$env:computername\$env:computername-Roles_WSUS.log&quot;
+If (!($Feature.Success)) {Log &quot;ERROR: Failed to install WSUS Role. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+Start-Sleep -s 120
+
+Log &quot;Configure WSUS... (log file located under %windir%\tmpXXXX.tmp)&quot;
+$arglist = &quot;postinstall CONTENT_DIR=F:\WSUS&quot;		# WSUS hosted locally
+$ret = Start-Process -NoNewWindow -Wait -PassThru -FilePath &quot;C:\Program Files\Update Services\Tools\wsusutil.exe&quot; -ArgumentList $arglist
+If ($ret.exitcode -ne 0) {Log &quot;ERROR: $ret.exitcode - Failed to configure WSUS. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+Start-Sleep -s 120
+
+Log &quot;    **WSUS is using the following DB:&quot;
+reg query &quot;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Update Services\Server\Setup&quot; /v SqlServerName
+Log &quot;`n&quot;
+
+
+Log &quot;**** Finished: Secondary Pre-Reqs Config... ****&quot;</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>300</ns1:delay>
+        <ns1:errorAction>Abort</ns1:errorAction>
+        <ns1:rebootRequired>true</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

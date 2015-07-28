@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - CM2012 - Static Vars Primary</ns1:name>
+        <ns1:id>259</ns1:id>
+        <ns1:description>Sets variables used in subsequent scripts.</ns1:description>
+        <ns1:uuid>8dc044ee-bed1-4287-892f-d48de074d812</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dhatchett2</ns1:name>
+            <ns1:href>user/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-26T22:47:00+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-06-12T20:41:29+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>a9e0cee7-f07e-48c7-8d98-c3c08cea34b3</ns1:slot>
+        <ns1:version>1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>188</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>versioned</ns1:versionStatus>
+        <ns1:checkoutAllowed>true</ns1:checkoutAllowed>
+        <ns1:headAllowed>true</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># Load Common functions
+. .\Logging.ps1
+. .\GlobalRepository.ps1
+. .\LaunchProcess.ps1
+. .\FilesUtility.ps1
+
+# get current script location
+$scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
+$scriptName = $MyInvocation.MyCommand.Name
+ 
+ConfigureLogging $scriptPath $scriptName
+ 
+#########################################################################
+# Main
+#########################################################################
+ 
+ 
+Log &quot;**** Starting: Static Variables... ****&quot;
+Log &quot;`n&quot;
+
+If ($CM_SITECODE -eq $NULL) 		{Write-Host 'ERROR: $CM_SITECODE not defined'; EXIT 1}
+If ($CM_SITEDESCRIPTION -eq $NULL) 	{Write-Host 'ERROR: $CM_SITEDESCRIPTION not defined'; EXIT 1}
+If ($CM_SMSINSTALLDIR -eq $NULL) 	{Write-Host 'ERROR: $CM_SMSINSTALLDIR not defined'; EXIT 1}
+If ($SQL_COMPONENTID -eq $NULL) 	{Write-Host 'ERROR: $SQL_COMPONENTID not defined'; EXIT 1}
+If ($SQL_INSTANCEID -eq $NULL) 		{Write-Host 'ERROR: $SQL_INSTANCEID not defined'; EXIT 1}
+If ($SQL_DATAFILEPATH -eq $NULL) 	{Write-Host 'ERROR: $SQL_DATAFILEPATH not defined'; EXIT 1}
+If ($SQL_LOGFILEPATH -eq $NULL) 	{Write-Host 'ERROR: $SQL_LOGFILEPATH not defined'; EXIT 1}
+If ($SQL_INSTANCENAME -eq $NULL) 	{Write-Host 'ERROR: $SQL_INSTANCENAME not defined'; EXIT 1}
+
+
+Log &quot;Set Primary Specific Environment Variables...&quot;
+SETX CM_SiteCode 		$CM_SITECODE /M
+SETX CM_SiteDescription $CM_SITEDESCRIPTION /M
+SETX CM_SMSInstallDir 	$CM_SMSINSTALLDIR /M
+SETX SQL_ComponentID 	$SQL_COMPONENTID /M
+SETX SQL_InstanceID 	$SQL_INSTANCEID /M
+SETX SQL_DataFilePath	$SQL_DATAFILEPATH /M
+SETX SQL_LogFilePath 	$SQL_LOGFILEPATH /M
+SETX SQL_InstanceName	$SQL_INSTANCENAME /M
+
+
+Log &quot;**** Finished: Static Variables... ****&quot;</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>1800</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Abort</ns1:errorAction>
+        <ns1:rebootRequired>true</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>CM_SMSINSTALLDIR</ns1:name>
+            <ns1:id>499</ns1:id>
+            <ns1:description>Folder where ConfigMgr will be installed</ns1:description>
+            <ns1:uuid>92fc0f7f-bf9d-4ad0-bb31-fe7eee95f3e0</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>CM_SMSINSTALLDIR</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4424</ns1:id>
+                <ns1:name>CM_SMSINSTALLDIR</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>CM_SMSINSTALLDIR</ns1:name>
+                    <ns1:href>/propertydefinition/499</ns1:href>
+                    <ns1:id>499</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>F:\SMS_ConfigMgr</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>14d54ae3-f60b-4457-a2af-aebeedd254de</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>CM_SITEDESCRIPTION</ns1:name>
+            <ns1:id>500</ns1:id>
+            <ns1:description>Description of ConfigMgr server</ns1:description>
+            <ns1:uuid>8596b2f0-0a25-42d9-9b3a-25abe954aa73</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>CM_SITEDESCRIPTION</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4425</ns1:id>
+                <ns1:name>CM_SITEDESCRIPTION</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>CM_SITEDESCRIPTION</ns1:name>
+                    <ns1:href>/propertydefinition/500</ns1:href>
+                    <ns1:id>500</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>&lt;place_holder&gt;</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>fc4b4529-aca9-40c5-871e-2abc2b8d66dc</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>CM_SITECODE</ns1:name>
+            <ns1:id>501</ns1:id>
+            <ns1:description>Sitecode of ConfigMgr server</ns1:description>
+            <ns1:uuid>38d53275-895f-4caa-abd0-56aa517cfc1e</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>CM_SITECODE</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4426</ns1:id>
+                <ns1:name>CM_SITECODE</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>CM_SITECODE</ns1:name>
+                    <ns1:href>/propertydefinition/501</ns1:href>
+                    <ns1:id>501</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>&lt;place_holder&gt;</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>cf179811-b0f8-4fde-977b-ee4b301c14f0</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>SQL_COMPONENTID</ns1:name>
+            <ns1:id>502</ns1:id>
+            <ns1:description>Agility ComponentID of SQL server</ns1:description>
+            <ns1:uuid>f5ae8dfd-2556-4acf-85ad-048b7b59979b</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQL_COMPONENTID</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4427</ns1:id>
+                <ns1:name>SQL_COMPONENTID</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>SQL_COMPONENTID</ns1:name>
+                    <ns1:href>/propertydefinition/502</ns1:href>
+                    <ns1:id>502</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>CNN</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>5d6b6be7-a16e-4052-8509-c842d25adc11</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>SQL_INSTANCEID</ns1:name>
+            <ns1:id>503</ns1:id>
+            <ns1:description>Agility InstanceID of SQL server</ns1:description>
+            <ns1:uuid>8535b6e4-fcc5-4fa3-bc67-5b67e3ac0619</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQL_INSTANCEID</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4428</ns1:id>
+                <ns1:name>SQL_INSTANCEID</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>SQL_INSTANCEID</ns1:name>
+                    <ns1:href>/propertydefinition/503</ns1:href>
+                    <ns1:id>503</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>&lt;place_holder&gt;</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>1fd81893-1766-489f-9262-14edec2aad09</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>SQL_INSTANCENAME</ns1:name>
+            <ns1:id>504</ns1:id>
+            <ns1:description>SQL Instance where ConfigMgr database will be created</ns1:description>
+            <ns1:uuid>e2aedf0d-b841-4890-8010-812fabd361d8</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQL_INSTANCENAME</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4429</ns1:id>
+                <ns1:name>SQL_INSTANCENAME</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>SQL_INSTANCENAME</ns1:name>
+                    <ns1:href>/propertydefinition/504</ns1:href>
+                    <ns1:id>504</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>MWSPCDEVICES01</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>627c834f-0fe2-42ed-939e-f37bcd3c56f0</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>SQL_LOGFILEPATH</ns1:name>
+            <ns1:id>505</ns1:id>
+            <ns1:description>Folder where DB Log file is stored on SQL server</ns1:description>
+            <ns1:uuid>206b524c-192e-4d07-87c9-9e09f76697d8</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQL_LOGFILEPATH</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4430</ns1:id>
+                <ns1:name>SQL_LOGFILEPATH</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>SQL_LOGFILEPATH</ns1:name>
+                    <ns1:href>/propertydefinition/505</ns1:href>
+                    <ns1:id>505</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>J:\SQL1\LOGS1</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>76acdcea-dc21-4125-97ce-f3e7cdc1b835</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>SQL_DATAFILEPATH</ns1:name>
+            <ns1:id>506</ns1:id>
+            <ns1:description>Folder where DB Data file is stored on SQL server</ns1:description>
+            <ns1:uuid>27706796-18ce-47d4-952b-9a91a1a776c1</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>SQL_DATAFILEPATH</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4431</ns1:id>
+                <ns1:name>SQL_DATAFILEPATH</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>SQL_DATAFILEPATH</ns1:name>
+                    <ns1:href>/propertydefinition/506</ns1:href>
+                    <ns1:id>506</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>J:\SQL1\DATA1</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>54f9a1b7-f304-4269-b35d-76817d7f98d0</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

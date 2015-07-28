@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - CM2012 - Secondary (POST Config)</ns1:name>
+        <ns1:id>377</ns1:id>
+        <ns1:description>Needs to be triggered from SECONDARY server</ns1:description>
+        <ns1:uuid>c754f618-b298-42ba-91f8-124802d46baa</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-06-22T17:26:14+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-06-22T17:33:20+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>a0a11967-be26-4a16-8eac-55b94cf89f66</ns1:slot>
+        <ns1:version>2</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>185</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># Load Common functions
+. .\GlobalRepository.ps1
+# Copy Common scripts to local profile
+Get-AppFiles &quot;Common&quot;
+
+# Load Common functions
+. .\Logging.ps1
+. .\LaunchProcess.ps1
+. .\FilesUtility.ps1
+. .\PlatformUtils.ps1
+
+
+# get current script location
+$scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
+$scriptName = $MyInvocation.MyCommand.Name
+ 
+ConfigureLogging $scriptPath $scriptName
+
+
+#########################################################################
+# Main
+#########################################################################
+
+#Use ArgList variable in Start-Process commands so embedded variables and env variables resolve
+
+$DomainFQDN =			(get-globalvariable(&quot;Global\DomainFQDN&quot;)).value
+$DomainNetBIOS = 		(get-globalvariable(&quot;Global\DomainNetBIOS&quot;)).value
+$ServiceAccountName = 	&quot;$DomainNetBIOS\$env:CM_ServiceAccount&quot;
+$ServiceAccountPwd = 	get-serviceAccountPassword -username $env:CM_ServiceAccount.ToLower()		# Covert to lowercase as get-serviceAccountPassword function is case sensitive
+$PShEXE = 				&quot;$PSHome\Powershell.exe&quot;
+
+If ($DomainFQDN -eq $NULL) 			{Write-Host 'ERROR: $DomainFQDN cannot be determined'; EXIT 1}
+If ($DomainNetBIOS -eq $NULL) 		{Write-Host 'ERROR: $DomainNetBIOS cannot be determined'; EXIT 1}
+If ($ServiceAccountName -eq $NULL) 	{Write-Host 'ERROR: $ServiceAccountName cannot be determined'; EXIT 1}
+If ($ServiceAccountPwd -eq $NULL) 	{Write-Host 'ERROR: $ServiceAccountPwd cannot be determined'; EXIT 1}
+
+Get-ScheduledTask | Where-Object {$_.TaskName -eq &quot;AgilityTask&quot;} | Unregister-ScheduledTask -Confirm:$False		#Cleanup existing tasks used by LaunchProcessAsUser function
+If (!(Test-Path &quot;HKLM:\SOFTWARE\Microsoft\SMS\Setup&quot;)) {Write-Host 'ERROR: No ConfigMgr installation was detected. Exiting...'; EXIT 1}
+
+Log &quot;**** Starting: Secondary POST Install Config... ****&quot;
+Log &quot;`n&quot;
+
+
+Log &quot;Installing POST ConfigMgr 2012 Updates...&quot;
+Get-AppFiles &quot;PC Devices\System Center\Server Provisioning\Common\ConfigMgr\Updates\ConfigMgr 2012\CU5 for ConfigMgr 2012 R2&quot;
+$CUfile = &quot;$ScriptPath\CM12-R2CU5-KB3054451-X64-ENU.exe&quot;
+Log &quot;    **KB3054451 | CU5 for ConfigMgr 2012 R2&quot;													# Log file output to %windir%\Temp
+$arglist = &quot;/Unattended /NoSQLTimeout /NoMOFTimeout&quot;
+$ret = LaunchProcessAsUser &quot;$CUfile&quot; $arglist $ServiceAccountName $ServiceAccountPwd
+If ($ret -ne 0 -And $ret -ne 3010 -And $ret -ne 3001) {Log &quot;ERROR: Exitcode = $ret. Failed to install ConfigMgr CU5. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+
+
+Log &quot;**** Finished:  Secondary POST Install Config... ****&quot;</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>900</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>300</ns1:delay>
+        <ns1:errorAction>Abort</ns1:errorAction>
+        <ns1:rebootRequired>true</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

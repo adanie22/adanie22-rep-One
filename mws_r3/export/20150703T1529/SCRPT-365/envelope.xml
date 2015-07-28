@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - CM2012 - Primary (POST Config)</ns1:name>
+        <ns1:id>376</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>d1c9656d-5e8e-4b0e-951c-4c22dfa8942c</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-06-22T17:24:29+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-06-22T17:33:39+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>6f76d314-f0ee-415e-b2f5-fe9d86c3fd2c</ns1:slot>
+        <ns1:version>2</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>189</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># Check ConfigMgr is installed
+If (!(Test-Path &quot;HKLM:\SOFTWARE\Microsoft\SMS\Components\SMS_EXECUTIVE&quot;)) {Write-Host 'ERROR: ConfigMgr install not detected!'; EXIT 1}
+
+# Load Common functions
+. .\Logging.ps1
+. .\GlobalRepository.ps1
+. .\LaunchProcess.ps1
+. .\FilesUtility.ps1
+. .\PlatformUtils.ps1
+
+
+# get current script location
+$scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
+$scriptName = $MyInvocation.MyCommand.Name
+ 
+ConfigureLogging $scriptPath $scriptName
+ 
+#########################################################################
+# Main
+#########################################################################
+
+# Use ArgList variable in Start-Process commands so embedded variables and env variables resolve
+# START.exe is used with msiexec otherwise it does not wait
+
+$DomainFQDN =				(get-globalvariable(&quot;Global\DomainFQDN&quot;)).value
+$DomainNetBIOS = 			(get-globalvariable(&quot;Global\DomainNetBIOS&quot;)).value
+$ServiceAccountName = 		&quot;$DomainNetBIOS\$env:CM_ServiceAccount&quot;
+$ServiceAccountPwd = 		get-serviceAccountPassword -username $env:CM_ServiceAccount.ToLower()		# Covert to lowercase as get-serviceAccountPassword function is case sensitive
+$SQL_ServiceAccountName =	&quot;svc_SCCM_SQL&quot;
+$SQL_ServiceAccountPwd = 	get-serviceAccountPassword -username $SQL_ServiceAccountName.ToLower()		# Covert to lowercase as get-serviceAccountPassword function is case sensitive
+$SQL_ServerName = 			(get-computername -ComponentID $env:SQL_ComponentID -InstanceID $env:SQL_InstanceID).ToUpper()
+$ComputerName =				$env:ComputerName.ToUpper()
+$Sitecode = 				$env:CM_SiteCode
+$PShEXE = 					&quot;$PSHome\Powershell.exe&quot;
+
+If ($DomainFQDN -eq $NULL) 				{Write-Host 'ERROR: $DomainFQDN not defined'; EXIT 1}
+If ($DomainNetBIOS -eq $NULL) 			{Write-Host 'ERROR: $DomainNetBIOS not defined'; EXIT 1}
+If ($ServiceAccountName -eq $NULL) 		{Write-Host 'ERROR: $ServiceAccountName not defined'; EXIT 1}
+If ($ServiceAccountPwd -eq $NULL) 		{Write-Host 'ERROR: $ServiceAccountPwd not defined'; EXIT 1}
+If ($SQL_ServiceAccountPwd -eq $NULL) 	{Write-Host 'ERROR: $SQL_ServiceAccountPwd not defined'; EXIT 1}
+If ($SQL_ServerName -eq $NULL) 			{Write-Host 'ERROR: $SQL_ServerName not defined'; EXIT 1}
+If ($Sitecode -eq $NULL) 				{Write-Host 'ERROR: $Sitecode not defined'; EXIT 1}
+
+
+Log &quot;**** Starting: Console Config... ****&quot;
+Log &quot;`n&quot;
+
+
+Log &quot;Customise ConfigMgr console...&quot;
+# Modify PS1 file which configures ConfigMgr console
+$PS1File = &quot;$ScriptPath\ConfigMgr\Scripts\CM2012-Console Config (PRI).ps1&quot;
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;ScriptPath =.*&quot; ,			&quot;ScriptPath = `'$ScriptPath`'&quot; }									| Set-Content $PS1File
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;DomainFQDN =.*&quot; ,			&quot;DomainFQDN = `'$DomainFQDN`'&quot; }									| Set-Content $PS1File
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;DomainNetBIOS =.*&quot; ,			&quot;DomainNetBIOS = `'$DomainNetBIOS`'&quot; }								| Set-Content $PS1File
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;SQL_ServerName =.*&quot; ,		&quot;SQL_ServerName = `'$SQL_ServerName`'&quot; }							| Set-Content $PS1File
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;Sitecode =.*&quot; ,				&quot;Sitecode = `'$Sitecode`'&quot; }										| Set-Content $PS1File
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;SQL_ServiceAccountName =.*&quot; ,&quot;SQL_ServiceAccountName = `'$SQL_ServiceAccountName`'&quot; }			| Set-Content $PS1File
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;SQL_ServiceAccountPwd =.*&quot; ,	&quot;SQL_ServiceAccountPwd = `'$SQL_ServiceAccountPwd`'&quot; }				| Set-Content $PS1File		# Needs to use single quotation marks so literal characters are used
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;SQL_ServiceName_Server =.*&quot; ,&quot;SQL_ServiceName_Server = `&quot;MSSQL```$$env:SQL_InstanceName`&quot;&quot; }		| Set-Content $PS1File		# Needs to use double quotation marks so $ sign can be used
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;SQL_ServiceName_Agent =.*&quot; ,	&quot;SQL_ServiceName_Agent = `&quot;SQLAgent```$$env:SQL_InstanceName`&quot;&quot; }	| Set-Content $PS1File
+
+# Run PS1 file which configures ConfigMgr console (Refer to &quot;%windir%\Debug\ConfigMgr\CM2012-Console Config (PRI).ps1_&lt;date&gt;.log&quot;)
+$ArgList = &quot;-NonInteractive -NoProfile -file `&quot;$PS1File`&quot;&quot;
+$ret = LaunchProcessAsUser &quot;$PShEXE&quot; $ArgList $ServiceAccountName $ServiceAccountPwd			# Needs to run %COMSPEC% as Powershell.exe was not found and is looking for absolute path
+
+#$ArgList = &quot;`&quot;$PS1File`&quot;&quot;
+#$SecPwd = ConvertTo-SecureString $ServiceAccountPwd -AsPlainText -Force
+#$Creds = new-object -typename System.Management.Automation.PSCredential -argumentlist &quot;$DomainNetBIOS\$ServiceAccountName&quot;, $SecPwd
+#$ret = LaunchProcessAsDomainUser -Process $ArgList -Arguments $Null -DCred $Creds
+
+If ($ret -ne 0 -And $ret -ne 3010) {Log &quot;ERROR: Exitcode = $ret. Failed to customise ConfigMgr console. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+
+Log &quot;Install ConfigMgr 2012 Configuration Pack...&quot;
+$ArgList = &quot;/c Start /WAIT MSIEXEC.exe /i `&quot;$ScriptPath\ConfigMgr\ConfigMgr 2012\ConfigMgr 2012 Configuration Pack\ConfigMgr2012ConfigPack.msi`&quot; /qn /norestart /log `&quot;$env:windir\Debug\ConfigMgr2012\$env:Computername\$env:computername-CM2012 Configuration Pack.msi.log`&quot;&quot;
+$ret = LaunchProcessAsUser &quot;$env:ComSpec&quot; $ArgList $ServiceAccountName $ServiceAccountPwd			# Needs to run %COMSPEC% in order to call START command
+If ($ret -ne 0 -And $ret -ne 3010) {Log &quot;ERROR: Exitcode = $ret. Failed to install ConfigMgr 2012 Configuration Pack. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+
+Log &quot;Install ConfigMgr 2012 Servicing Extension...&quot;
+$ArgList = &quot;/c Start /WAIT MSIEXEC.exe /i `&quot;$ScriptPath\ConfigMgr\ConfigMgr 2012\ConfigMgr 2012 Servicing Extension\Configuration Manager 2012 Servicing Extension.msi`&quot; /qn /norestart /log `&quot;$env:windir\Debug\ConfigMgr2012\$env:Computername\$env:computername-CM2012 Servicing Extension.msi.log`&quot;&quot;
+$ret = LaunchProcessAsUser &quot;$env:ComSpec&quot; $ArgList $ServiceAccountName $ServiceAccountPwd			# Needs to run %COMSPEC% in order to call START command
+If ($ret -ne 0 -And $ret -ne 3010) {Log &quot;ERROR: Exitcode = $ret. Failed to install ConfigMgr 2012 Servicing Extension. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+
+Log &quot;Install ConfigMgr 2012 Support Center...&quot;
+$ArgList = &quot;/c Start /WAIT MSIEXEC.exe /i `&quot;$ScriptPath\ConfigMgr\ConfigMgr 2012\ConfigMgr 2012 Support Center\cmsupportcenter.msi`&quot; /qn /norestart /log `&quot;$env:windir\Debug\ConfigMgr2012\$env:Computername\$env:computername-CM2012 Support Center.msi.log`&quot;&quot;
+$ret = LaunchProcessAsUser &quot;$env:ComSpec&quot; $ArgList $ServiceAccountName $ServiceAccountPwd			# Needs to run %COMSPEC% in order to call START command
+If ($ret -ne 0 -And $ret -ne 3010) {Log &quot;ERROR: Exitcode = $ret. Failed to install ConfigMgr 2012 Support Center. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+
+
+Log &quot;**** Finished: Console Config... ****&quot;</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>900</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>300</ns1:delay>
+        <ns1:errorAction>Abort</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

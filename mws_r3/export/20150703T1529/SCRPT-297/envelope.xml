@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - SharePoint2013 Connect To Office Web Apps farm</ns1:name>
+        <ns1:id>256</ns1:id>
+        <ns1:description>Binds SharePoint fam to Office Web Apps farm</ns1:description>
+        <ns1:uuid>5670a57a-9027-4041-bacd-a91ccbf74ab5</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dhatchett2</ns1:name>
+            <ns1:href>user/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-26T22:46:56+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-06-02T16:54:01+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>bc4789c1-808a-4505-b15e-273ae1ad1c3c</ns1:slot>
+        <ns1:version>1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment>R3 REL 0.3 - initital release</ns1:publishComment>
+        <ns1:slotId>175</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>mkrynina</ns1:name>
+            <ns1:href>user/11</ns1:href>
+            <ns1:id>11</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active_checkedout</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># MWS2R2 - ConnectToWAC2013 ##################################################################
+# Author: Marina Krynina
+#################################################################################################
+# \USER_PROFILE
+#        \Install
+#        \Config
+#        \InstallMedia
+#                \OWA2013SP1x64
+#        \Logs
+
+. .\LaunchProcess.ps1
+. .\VariableUtility.ps1
+. .\PlatformUtils.ps1
+. .\FilesUtility.ps1
+
+try
+{
+    Write-host &quot;INFO: Starting script execution&quot;
+    
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;Agility_Connect-ToWAC2013.ps1&quot;
+
+    $user = (Get-VariableValue $ADMIN &quot;agilitydeploy&quot; $true)
+    $password = get-serviceAccountPassword -username $user
+
+    log &quot;INFO: Getting variables values or setting defaults if the variables are not populated.&quot;
+    $WAC_SERVER = (Get-VariableValue $WAC_SERVER &quot;OfficeApps&quot; $false) 
+    $WAC_CONNECT = (Get-VariableValue $WAC_CONNECT &quot;false&quot; $false) 
+
+    $domainFull = get-domainname   
+    $wacServer = $WAC_SERVER + &quot;.$domainFull&quot;
+
+    if ($WAC_CONNECT -eq $true)
+    {
+	$process = &quot;$PSHOME\powershell.exe&quot;
+    	$argument = &quot;-file $scriptPath\Config\Connect-ToWAC2013.ps1 -scriptPath $scriptPath -wacServer $wacserver&quot;
+	log &quot;INFO: Attempting to bind SharePoint farm to $wacServer&quot;
+    	$Result = LaunchProcessWithHighestPrivAsUser $process $argument &quot;$domain\$user&quot; $password
+    }
+    else
+    {
+        log &quot;INFO: WAC_CONNECT flag is set to false. Skipping.&quot;
+    }
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    Write-host &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+} 
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>WAC_SERVER</ns1:name>
+            <ns1:id>374</ns1:id>
+            <ns1:description>Internal URL that was used when the WAC farm mwas created</ns1:description>
+            <ns1:uuid>f8680406-ef79-432a-9d81-4eb3afb1541a</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>WAC_SERVER</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4299</ns1:id>
+                <ns1:name>WAC_SERVER</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>WAC_SERVER</ns1:name>
+                    <ns1:href>/propertydefinition/374</ns1:href>
+                    <ns1:id>374</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>OfficeApps</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>d269718f-8d81-4c1d-bc12-ca9cb015db8e</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>WAC_CONNECT</ns1:name>
+            <ns1:id>375</ns1:id>
+            <ns1:description>Flag to indicateif SharePoint should be connected to WAC</ns1:description>
+            <ns1:uuid>023a67b4-6c6a-4664-a083-00c3d801f4db</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>WAC_CONNECT</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4300</ns1:id>
+                <ns1:name>WAC_CONNECT</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>WAC_CONNECT_localValue</ns1:name>
+                    <ns1:href>/propertytype/83</ns1:href>
+                    <ns1:id>83</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>WAC_CONNECT</ns1:name>
+                    <ns1:href>/propertydefinition/375</ns1:href>
+                    <ns1:id>375</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>false</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>WAC_CONNECT_localValue</ns1:name>
+                <ns1:href>propertytype/83</ns1:href>
+                <ns1:id>83</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:propertyTypeValue>
+                <ns1:name>WAC_CONNECT_localValue</ns1:name>
+                <ns1:id>83</ns1:id>
+                <ns1:uuid>3d67910e-8788-47fd-828f-04d7cfa45562</ns1:uuid>
+                <ns1:assetType>
+                    <ns1:name>propertytype</ns1:name>
+                    <ns1:href>assettype/48</ns1:href>
+                    <ns1:id>48</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:assetType>
+                <ns1:top>false</ns1:top>
+                <ns1:assetPath></ns1:assetPath>
+                <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                <ns1:removable>true</ns1:removable>
+                <ns1:displayName>WAC_CONNECT</ns1:displayName>
+                <ns1:type>string</ns1:type>
+                <ns1:open>false</ns1:open>
+                <ns1:valueConstraint>list</ns1:valueConstraint>
+                <ns1:rootValue>
+                    <ns1:name>false</ns1:name>
+                    <ns1:id>513</ns1:id>
+                    <ns1:uuid>fdde3c96-b041-41c7-a046-f35f2129e895</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>false</ns1:displayName>
+                    <ns1:value>false</ns1:value>
+                </ns1:rootValue>
+                <ns1:rootValue>
+                    <ns1:name>true</ns1:name>
+                    <ns1:id>514</ns1:id>
+                    <ns1:uuid>2e800431-efd6-437e-9900-3bcc8ac961f0</ns1:uuid>
+                    <ns1:top>false</ns1:top>
+                    <ns1:assetPath></ns1:assetPath>
+                    <ns1:detailedAssetPath></ns1:detailedAssetPath>
+                    <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+                    <ns1:removable>true</ns1:removable>
+                    <ns1:displayName>true</ns1:displayName>
+                    <ns1:value>true</ns1:value>
+                </ns1:rootValue>
+                <ns1:owned>true</ns1:owned>
+            </ns1:propertyTypeValue>
+            <ns1:assetPropertyLinkId>8dcef8a2-b0f3-435a-835f-73aa0aed069e</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>ADMIN</ns1:name>
+            <ns1:id>376</ns1:id>
+            <ns1:description>Setup account</ns1:description>
+            <ns1:uuid>af7a97b3-defe-4928-a52b-17afe1bfda81</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>ADMIN</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4301</ns1:id>
+                <ns1:name>ADMIN</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>ADMIN</ns1:name>
+                    <ns1:href>/propertydefinition/376</ns1:href>
+                    <ns1:id>376</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>agilitydeploy</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>c5d5e807-36a3-4f4b-9ec5-d2cc79a010a1</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

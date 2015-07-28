@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - Avecto - Prereqs</ns1:name>
+        <ns1:id>357</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>52ded344-36af-44e1-9503-f7e9308ece2c</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-06-05T15:58:07+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-06-12T20:43:03+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>8be72861-4d15-4693-94c1-14d8be290f22</ns1:slot>
+        <ns1:version>1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>192</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>versioned</ns1:versionStatus>
+        <ns1:checkoutAllowed>true</ns1:checkoutAllowed>
+        <ns1:headAllowed>true</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body># Load Common functions
+. .\Logging.ps1
+. .\GlobalRepository.ps1
+. .\LaunchProcess.ps1
+. .\FilesUtility.ps1
+. .\PlatformUtils.ps1
+. .\UsersUtility.ps1
+
+
+# get current script location
+$scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
+$scriptName = $MyInvocation.MyCommand.Name
+ 
+ConfigureLogging $scriptPath $scriptName
+ 
+#########################################################################
+# Main
+#########################################################################
+ 
+$DomainNetBIOS = 		(get-globalvariable(&quot;Global\DomainNetBIOS&quot;)).value
+ 
+
+Log &quot;**** Starting: Common Pre-Reqs Config... ****&quot;
+Log &quot;`n&quot;
+
+
+Log &quot;Copy required content locally&quot;		# Will be copied to C:\Users\&lt;profile&gt;
+Get-AppFiles &quot;PC Devices\Avecto&quot;
+Get-AppFiles &quot;PC Devices\Misc\WindowsFeatures_Prereq&quot;
+Log &quot;`n&quot;
+
+Log &quot;Set Timezone...&quot;
+tzutil /s &quot;$OS_TIMEZONE&quot;
+If ($LastExitCode -ne 0) {Log &quot;ERROR: Timezone could not be set. Possibly due to inability to enumerate variables.&quot;; EXIT 1}
+Log &quot;`n&quot;
+
+
+Log &quot;Installing Windows 2012 Roles (.NET 3.5 - includes .NET 2.0 and 3.0)...&quot;			# .NET 4.0 is already included in the Server SOE
+Log &quot;    **KB2966828  |  .NET 3.5 prereq on Win2012 as per KB3005628&quot;
+CMD /c Start /WAIT WUSA.exe &quot;$ScriptPath\WindowsFeatures_Prereq\Windows8.1-KB2966828-x64.msu&quot; /quiet /norestart /log:&quot;$env:windir\Debug\ConfigMgr2012\$env:Computername\$env:computername-KB3005628.log&quot;
+Log &quot;    **.NET 3.5&quot;
+$Feature = Install-WindowsFeature -Name NET-Framework-Core -Source &quot;$ScriptPath\WindowsFeatures_Prereq\sxs&quot; -LogPath &quot;$env:windir\Debug\ConfigMgr2012\$env:Computername\$env:computername-Roles_.NET3.5.log&quot;		# Source switch used for .NET 3.5 only
+If (!($Feature.Success)) {Log &quot;ERROR: Failed to install Windows Roles and Features. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+
+Log &quot;Installing Windows 2012 Features (BITS, GPMC, AD Tools)...&quot;
+$Feature = Install-WindowsFeature -Name BITS-IIS-Ext,RSAT-Bits-Server,GPMC,RSAT-ADDS-Tools,RSAT-ADLDS -LogPath &quot;$env:windir\Debug\Avecto\$env:Computername\$env:computername-Features.log&quot;
+If (!($Feature.Success)) {Log &quot;ERROR: Failed to install Windows Roles and Features. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+Start-Sleep -Seconds 30
+
+
+Log &quot;Define Local Admins...&quot;		# Does not require domain credentials to run
+net user /add PCDevices_Admin PCdevices@dmin											# Create local account
+AddUserToLocalAdministrators -ServerName &quot;$env:Computername&quot; -UserName &quot;$env:Computername\PCDevices_Admin&quot;
+AddUserToLocalAdministrators -ServerName &quot;$env:Computername&quot; -UserName &quot;$DomainNetBIOS\DEL-G-CSC Infrastructure Services&quot;
+Log &quot;`n&quot;
+
+
+Log &quot;Creating User Profile Cleanup Task...&quot;
+$SchTasks_Date = (Get-Date).AddDays(5).ToString(&quot;MM/dd/yyyy&quot;)
+$ProfPath = $env:UserProfile
+# Create Agility User cleanup script
+echo &quot;Get-CimInstance win32_userprofile -Verbose | Where {`$_.LocalPath -eq '$ProfPath'} | Remove-CimInstance -Verbose&quot; &gt; $env:windir\Debug\Avecto\Agility-DelProf-$env:USERNAME.ps1
+SchTasks /Create /SC &quot;Once&quot; /SD $SchTasks_Date /ST 01:00 /F /RU &quot;SYSTEM&quot; /TN &quot;Agility-DelProf-$env:USERNAME&quot; /TR &quot;Powershell.exe -File '$env:windir\Debug\Avecto\Agility-DelProf-$env:USERNAME.ps1'&quot;
+Log &quot;`n&quot;
+
+
+Log &quot;**** Finished: Common Pre-Reqs Config... ****&quot;</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>1800</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Abort</ns1:errorAction>
+        <ns1:rebootRequired>true</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>OS_TIMEZONE</ns1:name>
+            <ns1:id>1009</ns1:id>
+            <ns1:description>Timezone as per &quot;TZUTIL /L&quot;</ns1:description>
+            <ns1:uuid>ddd684eb-58a2-4ce4-ade5-e2bce92ebfc4</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>OS_TIMEZONE</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>1</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>11159</ns1:id>
+                <ns1:name>OS_TIMEZONE</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>OS_TIMEZONE</ns1:name>
+                    <ns1:href>/propertydefinition/1009</ns1:href>
+                    <ns1:id>1009</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>AUS Eastern Standard Time</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>1262eba0-6933-489b-9c94-29fafca60ea2</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

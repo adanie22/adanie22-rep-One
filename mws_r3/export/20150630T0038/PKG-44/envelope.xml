@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - Set PageFile</ns1:name>
+        <ns1:id>255</ns1:id>
+        <ns1:description>Configure / Move the PageFile</ns1:description>
+        <ns1:uuid>7ab01cd7-5095-4ef7-87a8-7a29813ca809</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dhatchett2</ns1:name>
+            <ns1:href>user/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-26T22:46:56+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-29T14:07:11+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>b286d87c-d5cc-4d06-aaac-1ae0f080a991</ns1:slot>
+        <ns1:version>1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment>R3 REL 0.2</ns1:publishComment>
+        <ns1:slotId>149</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>devraus01</ns1:name>
+            <ns1:href>user/9</ns1:href>
+            <ns1:id>9</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>try
+{
+    $scriptPath = $env:USERPROFILE
+    . .\LoggingV2.ps1 $true $scriptPath &quot;Set-PageFile.ps1&quot;
+    . .\Set-PageFile.ps1
+
+    exit 0
+}
+catch
+{
+    $ex = $_.Exception | format-list | Out-String
+    log &quot;ERROR: Exception occurred `nException Message: $ex&quot;
+
+    exit 1
+}      
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>MAXIMUMSIZEMB</ns1:name>
+            <ns1:id>369</ns1:id>
+            <ns1:description>Maximum size of PageFile in MB</ns1:description>
+            <ns1:uuid>a3d0e995-bb1b-46f4-b8a7-1a5895d37e07</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>MAXIMUMSIZEMB</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator>
+                <ns1:IntegerRangeValidator>
+                    <ns1:top>false</ns1:top>
+                </ns1:IntegerRangeValidator>
+                <ns1:IntegerScaleValidator>
+                    <ns1:top>false</ns1:top>
+                    <ns1:maxDigits>20</ns1:maxDigits>
+                </ns1:IntegerScaleValidator>
+            </ns1:validator>
+            <ns1:propertyType>
+                <ns1:name>integer-any</ns1:name>
+                <ns1:href>propertytype/1</ns1:href>
+                <ns1:id>1</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>2e09f277-11ca-4936-bb2a-d31cff329a11</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>INITIALSIZEMB</ns1:name>
+            <ns1:id>370</ns1:id>
+            <ns1:description>Initial size of PageFile in MB</ns1:description>
+            <ns1:uuid>b83ce32f-379f-4d6d-93ca-6e07d17d6a21</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>INITIALSIZEMB</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator>
+                <ns1:IntegerRangeValidator>
+                    <ns1:top>false</ns1:top>
+                </ns1:IntegerRangeValidator>
+                <ns1:IntegerScaleValidator>
+                    <ns1:top>false</ns1:top>
+                    <ns1:maxDigits>20</ns1:maxDigits>
+                </ns1:IntegerScaleValidator>
+            </ns1:validator>
+            <ns1:propertyType>
+                <ns1:name>integer-any</ns1:name>
+                <ns1:href>propertytype/1</ns1:href>
+                <ns1:id>1</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>4b7fe2cc-89d6-41b9-82ad-e03a80818b3c</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>PAGEFILEPATH</ns1:name>
+            <ns1:id>371</ns1:id>
+            <ns1:description>Location and filename of PageFile</ns1:description>
+            <ns1:uuid>3296b783-a36e-4133-9889-229adc5801f3</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>PAGEFILEPATH</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4296</ns1:id>
+                <ns1:name>PAGEFILEPATH</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>PAGEFILEPATH</ns1:name>
+                    <ns1:href>/propertydefinition/371</ns1:href>
+                    <ns1:id>371</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>F:\pagefile.sys</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>e5b6fccf-cb7d-40c0-af7e-6435b5083510</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Package">
+        <ns1:name>MWS2R3 - Set PageFile</ns1:name>
+        <ns1:id>49</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>cc630f8e-bfc9-4669-875d-92a990ab1482</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>package</ns1:name>
+            <ns1:href>assettype/3</ns1:href>
+            <ns1:id>3</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>sskoklev</ns1:name>
+            <ns1:href>user/10</ns1:href>
+            <ns1:id>10</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-29T14:26:16+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-29T14:27:31+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>8f40fcdb-cba9-4d66-a8b1-30b0659fd6c6</ns1:slot>
+        <ns1:version>2</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment>R3 REL 0.2 - updated package to use script HEAD</ns1:publishComment>
+        <ns1:slotId>150</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>sskoklev</ns1:name>
+            <ns1:href>user/10</ns1:href>
+            <ns1:id>10</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:install>
+            <ns1:name>MWS2R3 - Set PageFile</ns1:name>
+            <ns1:href>script/265</ns1:href>
+            <ns1:id>255</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+    </ns1:Asset>
+</ns1:Envelope>

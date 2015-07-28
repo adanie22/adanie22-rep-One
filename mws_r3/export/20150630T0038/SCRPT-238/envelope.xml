@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - CM2012 - Install Secondary</ns1:name>
+        <ns1:id>238</ns1:id>
+        <ns1:description>Needs to be triggered from PRIMARY server</ns1:description>
+        <ns1:uuid>34a0d712-9b21-44dd-aad1-fbd71ed021ab</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>dhatchett2</ns1:name>
+            <ns1:href>user/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-26T22:46:46+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-06-12T20:41:17+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>12d576d7-0770-49d1-820b-b02fd63505fa</ns1:slot>
+        <ns1:version>1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>186</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>dridley</ns1:name>
+            <ns1:href>user/12</ns1:href>
+            <ns1:id>12</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>versioned</ns1:versionStatus>
+        <ns1:checkoutAllowed>true</ns1:checkoutAllowed>
+        <ns1:headAllowed>true</ns1:headAllowed>
+        <ns1:operatingSystem>Windows</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>If ($CM_SECONDARY_NETBIOSNAME -eq $NULL) 	{Write-Host 'ERROR: $CM_SECONDARY_NETBIOSNAME not defined. Please set variable before running!'; EXIT 1}
+If ($CM_SECONDARY_SITECODE -eq $NULL) 		{Write-Host 'ERROR: $CM_SECONDARY_SITECODE not defined. Please set variable before running!'; EXIT 1}
+If ($CM_SECONDARY_DESCRIPTION -eq $NULL) 	{Write-Host 'ERROR: $CM_SECONDARY_DESCRIPTION not defined. Please set variable before running!'; EXIT 1}
+If ($CM_SECONDARY_INSTALLDIR -eq $NULL) 	{Write-Host 'ERROR: $CM_SECONDARY_INSTALLDIR not defined. Please set variable before running!'; EXIT 1}
+
+
+# Load Common functions
+. .\GlobalRepository.ps1
+# Copy Common scripts to local profile
+Get-AppFiles &quot;Common&quot;
+
+. .\Logging.ps1
+. .\LaunchProcess.ps1
+. .\FilesUtility.ps1
+. .\PlatformUtils.ps1
+
+
+# get current script location
+$scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
+$scriptName = $MyInvocation.MyCommand.Name
+ 
+ConfigureLogging $scriptPath $scriptName
+
+
+#########################################################################
+# Main
+#########################################################################
+
+#Use ArgList variable in Start-Process commands so embedded variables and env variables resolve
+
+$DomainFQDN =			(get-globalvariable(&quot;Global\DomainFQDN&quot;)).value
+$DomainNetBIOS = 		(get-globalvariable(&quot;Global\DomainNetBIOS&quot;)).value
+$ServiceAccountName = 	&quot;$DomainNetBIOS\$env:CM_ServiceAccount&quot;
+$ServiceAccountPwd = 	get-serviceAccountPassword -username $env:CM_ServiceAccount.ToLower()					# Covert to lowercase as get-serviceAccountPassword function is case sensitive
+$PShEXE = 				&quot;$PSHome\Powershell.exe&quot;
+
+If ($DomainFQDN -eq $NULL) 			{Write-Host 'ERROR: $DomainFQDN cannot be determined'; EXIT 1}
+If ($DomainNetBIOS -eq $NULL) 		{Write-Host 'ERROR: $DomainNetBIOS cannot be determined'; EXIT 1}
+If ($ServiceAccountName -eq $NULL) 	{Write-Host 'ERROR: $ServiceAccountName not defined'; EXIT 1}
+If ($ServiceAccountPwd -eq $NULL) 	{Write-Host 'ERROR: $ServiceAccountPwd cannot be determined'; EXIT 1}
+
+
+Log &quot;**** Starting: Secondary Install... ****&quot;
+Log &quot;`n&quot;
+
+
+Log &quot;Customise PS1 template for Secondary install...&quot;
+# Copy Template file
+Get-AppFiles &quot;PC Devices\System Center\Server Provisioning\Secondary-DP&quot;
+$PS1File = &quot;$env:windir\Debug\ConfigMgr2012\Unattend_$CM_SECONDARY_NETBIOSNAME.ps1&quot;
+Move-Item &quot;$ScriptPath\Unattend_Template_SEC.ps_&quot; $PS1File -Force
+
+# Update template
+$CM_SECONDARY_NETBIOSNAME = $CM_SECONDARY_NETBIOSNAME.ToUpper()
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;SecServer_FQDNName =.*&quot; , 		&quot;SecServer_FQDNName = `&quot;$CM_SECONDARY_NETBIOSNAME.$DomainFQDN`&quot;&quot; } 	| Set-Content $PS1File
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;SecServer_Sitecode =.*&quot; , 	&quot;SecServer_Sitecode = `&quot;$CM_SECONDARY_SITECODE`&quot;&quot; } 					| Set-Content $PS1File
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;SecServer_Sitename =.*&quot; , 	&quot;SecServer_Sitename = `&quot;$CM_SECONDARY_DESCRIPTION`&quot;&quot; } 					| Set-Content $PS1File
+(Get-Content $PS1File) | ForEach-Object { $_ -replace &quot;SecServer_InstallDir =.*&quot; , 	&quot;SecServer_InstallDir = `&quot;$CM_SECONDARY_INSTALLDIR`&quot;&quot; }					| Set-Content $PS1File
+	
+
+Log &quot;Install ConfigMgr 2012 Secondary...&quot;
+$ArgList = &quot;-file $PS1File&quot;
+$ret = LaunchProcessAsUser &quot;$PShEXE&quot; $ArgList $ServiceAccountName $ServiceAccountPwd			# Needs to run %COMSPEC% as Powershell.exe was not found and is looking for absolute path
+If ($ret -ne 0) {Log &quot;ERROR: Exitcode = $ret. Failed to install ConfigMgr 2012 Secondary. Exiting...&quot;; EXIT 1}
+Log &quot;`n&quot;
+
+
+Log &quot;Creating User Profile Cleanup Task...&quot;
+$SchTasks_Date = (Get-Date).AddDays(5).ToString(&quot;MM/dd/yyyy&quot;)
+$ProfPath = $env:UserProfile
+# Create Agility User cleanup script
+echo &quot;Get-CimInstance win32_userprofile -Verbose | Where {`$_.LocalPath -eq '$ProfPath'} | Remove-CimInstance -Verbose&quot; &gt; $env:windir\Debug\ConfigMgr2012\Agility-DelProf-$env:USERNAME.ps1
+SchTasks /Create /SC &quot;Once&quot; /SD $SchTasks_Date /ST 01:00 /F /RU &quot;SYSTEM&quot; /TN &quot;Agility-DelProf-$env:USERNAME&quot; /TR &quot;Powershell.exe -File '$env:windir\Debug\ConfigMgr2012\Agility-DelProf-$env:USERNAME.ps1'&quot;
+Log &quot;`n&quot;
+
+
+Log &quot;**** Finished: Secondary Install... ****&quot;</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>900</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>300</ns1:delay>
+        <ns1:errorAction>Abort</ns1:errorAction>
+        <ns1:rebootRequired>true</ns1:rebootRequired>
+        <ns1:variable>
+            <ns1:name>CM_SECONDARY_NETBIOSNAME</ns1:name>
+            <ns1:id>345</ns1:id>
+            <ns1:description>NetBIOS name of Secondary Site Server</ns1:description>
+            <ns1:uuid>24649615-dbee-44c2-9e4d-e66713248673</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>CM_SECONDARY_NETBIOSNAME</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>94db0a57-470b-40cb-a908-b6ae5713fcbc</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>CM_SECONDARY_SITECODE</ns1:name>
+            <ns1:id>346</ns1:id>
+            <ns1:description>Sitecode of Secondary Site Server</ns1:description>
+            <ns1:uuid>6ae34fed-5cc7-4f5c-b07d-4dd871c68e3c</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>CM_SECONDARY_SITECODE</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>79840694-41b3-44ab-8915-86c75e254ee0</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>CM_SECONDARY_DESCRIPTION</ns1:name>
+            <ns1:id>347</ns1:id>
+            <ns1:description>Description of ConfigMgr server</ns1:description>
+            <ns1:uuid>1de93103-9be3-46a7-b3e9-07098fd007a6</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>CM_SECONDARY_DESCRIPTION</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>4a638b25-4809-4ac8-97f2-a41745fb04a1</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:variable>
+            <ns1:name>CM_SECONDARY_INSTALLDIR</ns1:name>
+            <ns1:id>348</ns1:id>
+            <ns1:description>Folder where ConfigMgr will be installed</ns1:description>
+            <ns1:uuid>23a54461-f752-465e-8f6b-253663521d27</ns1:uuid>
+            <ns1:top>false</ns1:top>
+            <ns1:assetPath></ns1:assetPath>
+            <ns1:detailedAssetPath></ns1:detailedAssetPath>
+            <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+            <ns1:removable>true</ns1:removable>
+            <ns1:displayName>CM_SECONDARY_INSTALLDIR</ns1:displayName>
+            <ns1:readable>true</ns1:readable>
+            <ns1:writable>true</ns1:writable>
+            <ns1:minRequired>0</ns1:minRequired>
+            <ns1:maxAllowed>1</ns1:maxAllowed>
+            <ns1:validator/>
+            <ns1:defaultValue>
+                <ns1:id>4282</ns1:id>
+                <ns1:name>CM_SECONDARY_INSTALLDIR</ns1:name>
+                <ns1:encrypted>false</ns1:encrypted>
+                <ns1:overridable>true</ns1:overridable>
+                <ns1:propertyType>
+                    <ns1:name>string-any</ns1:name>
+                    <ns1:href>/propertytype/4</ns1:href>
+                    <ns1:id>4</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyType>
+                <ns1:propertyDefinition xsi:type="ns1:Link">
+                    <ns1:name>CM_SECONDARY_INSTALLDIR</ns1:name>
+                    <ns1:href>/propertydefinition/348</ns1:href>
+                    <ns1:id>348</ns1:id>
+                    <ns1:rel>up</ns1:rel>
+                    <ns1:type>application/com.servicemesh.agility.api.PropertyDefinition+xml</ns1:type>
+                    <ns1:position>0</ns1:position>
+                </ns1:propertyDefinition>
+                <ns1:stringValue>F:\SMS_ConfigMgr</ns1:stringValue>
+            </ns1:defaultValue>
+            <ns1:propertyType>
+                <ns1:name>string-any</ns1:name>
+                <ns1:href>propertytype/4</ns1:href>
+                <ns1:id>4</ns1:id>
+                <ns1:type>application/com.servicemesh.agility.api.PropertyType+xml</ns1:type>
+            </ns1:propertyType>
+            <ns1:assetPropertyLinkId>56299064-df57-4b78-a2b5-dbfc3bbb3074</ns1:assetPropertyLinkId>
+        </ns1:variable>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

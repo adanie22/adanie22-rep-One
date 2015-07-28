@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - AD MWS Policies</ns1:name>
+        <ns1:id>165</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>3f1f36bc-4fb2-48b0-83af-073af7dcadcc</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>mfreema6</ns1:name>
+            <ns1:href>user/7</ns1:href>
+            <ns1:id>7</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-14T15:09:38+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-14T15:12:55+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>2ac1e055-895a-40e2-8a91-a3d078190878</ns1:slot>
+        <ns1:version>3</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>121</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>mfreema6</ns1:name>
+            <ns1:href>user/7</ns1:href>
+            <ns1:id>7</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows|2012</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>write-output &quot;Starting MWS Policies&quot;
+# Load Common functions
+. .\\Logging.ps1
+. .\\GlobalRepository.ps1
+. .\\LaunchProcess.ps1
+. .\\FilesUtility.ps1
+
+Start-Sleep -s 120
+
+$scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
+$scriptName = $MyInvocation.MyCommand.Name
+
+$domainname = (get-globalvariable &quot;Global\DomainFQDN&quot;).value
+$domainNB = (get-globalvariable &quot;Global\DomainNetBIOS&quot;).value
+$dn = (get-globalvariable &quot;AD\DistinguishedName&quot;).value
+
+write-output &quot;Creating folders&quot;
+MD e:\Admin
+MD e:\Scripts
+
+write-output &quot;Creating reserve file&quot;
+fsutil file createnew e:\reservefile 512000000
+
+write-output &quot;Restricting RPC Port Ranges&quot;
+MD HKLM:\Software\Microsoft\Rpc\Internet
+New-ItemProperty -Path HKLM:\Software\Microsoft\Rpc\Internet -Name Ports -PropertyType MultiString  -Value &quot;49152-49407&quot;
+New-ItemProperty -Path HKLM:\Software\Microsoft\Rpc\Internet -Name PortsInternetAvailable -PropertyType String  -Value &quot;Y&quot;
+New-ItemProperty -Path HKLM:\Software\Microsoft\Rpc\Internet -Name UseInternetPorts -PropertyType String  -Value &quot;Y&quot;
+
+
+write-output &quot;Installing MWS Audit Settings.&quot;
+. .\MWS-ImportAuditSettings.ps1
+
+write-output &quot;Installing MWS Domain Group Policy.&quot;
+$gpOut = new-gpo -name MWSDomainPolicy -domain $domainname  | new-gplink -target $dn -Order 1 -domain $domainname
+$gpOut = import-gpo -BackupId 49b08726-736b-471c-af44-a7882cc552d9 -TargetName MWSDomainPolicy -path &quot;$scriptPath\MWSGPO&quot;
+write-output &quot;MWS Domain Group Policy created and linked&quot;
+
+write-output &quot;Installing MWS Domain Controller Group Policy.&quot;
+$gpOut = new-gpo -name MWSDomainControllerPolicy -domain $domainname  | new-gplink -target &quot;ou=Domain Controllers,$dn&quot; -Order 1 -domain $domainname
+$gpOut = import-gpo -BackupId BD6FFD6A-2094-4E7F-9FB8-382C1D978952 -TargetName MWSDomainControllerPolicy -path &quot;$scriptPath\MWSGPO&quot;
+write-output &quot;MWS Domain Controller Group Policy created and linked&quot;
+
+write-output &quot;Installing MWS Member Server Group Policy.&quot;
+$gpOut = new-gpo -name MWSMemberServerPolicy -domain $domainname  | new-gplink -target &quot;ou=Servers,ou=Customer,$dn&quot; -Order 1 -domain $domainname
+$gpOut = import-gpo -BackupId f4b545e5-4a1a-4248-bb5d-b9b9aeb6ae79 -TargetName MWSMemberServerPolicy -path &quot;$scriptPath\MWSGPO&quot;
+write-output &quot;MWS Member Server Group Policy created and linked&quot;
+
+write-output &quot;Adding Exchange servers group to PERM-D-DCSecurityLogManager&quot;
+Add-ADGroupMember 'PERM-D-DCSecurityLogManager' 'Exchange Servers'
+
+write-output &quot;Enabling Recycle Bin&quot;
+Enable-ADOptionalFeature 'Recycle Bin Feature' -Scope ForestOrConfigurationSet -Target $domainname -confirm:$false
+
+write-output &quot;Setting Domain Password Object&quot;
+New-ADFineGrainedPasswordPolicy -Name &quot;DomainUsersPSO&quot; -Precedence 10 -Description &quot;Domain Users Password Policy&quot; -DisplayName &quot;Domain Users PSO&quot; -MinPasswordLength 15 -LockoutDuration &quot;0.00:04:00&quot; -LockoutObservationWindow &quot;0.00:04:00&quot; -LockoutThreshold 4 -PasswordHistoryCount 6 -ReversibleEncryptionEnabled $false -ComplexityEnabled $true -MinPasswordAge &quot;1.00:00:00&quot; -MaxPasswordAge &quot;60.00:00:00&quot;
+Add-ADFineGrainedPasswordPolicySubject DomainUsersPSO -Subjects 'Domain Users'
+
+
+write-output &quot;MWS Policies Installed.&quot;
+</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>true</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:Asset>
+</ns1:Envelope>

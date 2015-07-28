@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns1:Envelope xmlns:ns1="http://servicemesh.com/agility/api" xmlns:ns2="http://servicemesh.com/core/messaging" ns1:version="3.0" ns1:productVersion="9.2.4">
+    <ns1:pendingAsset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Script">
+        <ns1:name>MWS2R3 - Forefront Identity Manager</ns1:name>
+        <ns1:id>171</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>bc6833a7-88e1-436d-9d11-881d16785d26</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>script</ns1:name>
+            <ns1:href>assettype/2</ns1:href>
+            <ns1:id>2</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>false</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>admin</ns1:name>
+            <ns1:href>user/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-18T13:30:05+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-18T13:30:31+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>06ac41ad-578e-4085-b03d-e2d5c861e167</ns1:slot>
+        <ns1:version>1</ns1:version>
+        <ns1:latest>true</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>133</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>admin</ns1:name>
+            <ns1:href>user/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>true</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows|2012</ns1:operatingSystem>
+        <ns1:enableExtensions>false</ns1:enableExtensions>
+        <ns1:body>write-output &quot;Starting&quot;
+# Load Common functions
+. .\\Logging.ps1
+. .\\GlobalRepository.ps1
+. .\\LaunchProcess.ps1
+. .\\FilesUtility.ps1
+$scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
+$scriptName = $MyInvocation.MyCommand.Name
+ConfigureLogging $scriptPath $scriptName
+get-appfiles &quot;ForefrontIdentityManager&quot;
+start-process &quot;msiexec.exe&quot; &quot;/i $scriptPath\\sqlncli.msi /q&quot; -wait
+# get variables
+$domainname = (get-globalvariable &quot;Global\DomainFQDN&quot;).value
+$domainNB = (get-globalvariable &quot;Global\DomainNetBIOS&quot;).value
+$username = &quot;svc_fim&quot;
+$password = (get-globalvariable(&quot;ServiceAccount\$username&quot;)).value
+$dbServer = &quot;DBServer&quot;
+
+# Launch process
+$args = &quot;/q /i `&quot;$scriptPath\\FIM\\Synchronization Service\\Synchronization Service.msi`&quot; STORESERVER=$DBServer SQLDB=FIMSynchronization SERVICEACCOUNT=$username SERVICEPASSWORD=$password SERVICEDOMAIN=$domainNB GROUPADMINS=FIMSyncAdmins GROUPOPERATORS=FIMSyncOperators GROUPACCOUNTJOINERS=FIMSyncJoiners GROUPBROWSE=FIMSyncBrowse GROUPPASSWORDSET=FIMSyncPasswordSet FIREWALL_CONF=1   /L*v C:\\deploy\\fimsetup.txt&quot;
+write-output $args
+#LaunchProcessAsUser &quot;msiexec.exe&quot; $args &quot;devmws\\agilitydeploy&quot; &quot;M3sh@dmin!&quot;</ns1:body>
+        <ns1:type>Guest</ns1:type>
+        <ns1:language>
+            <ns1:name>powershell</ns1:name>
+            <ns1:href>scriptlanguage/5</ns1:href>
+            <ns1:id>5</ns1:id>
+            <ns1:rel>down</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.ScriptLanguage+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:language>
+        <ns1:runAsAdmin>false</ns1:runAsAdmin>
+        <ns1:timeout>3600</ns1:timeout>
+        <ns1:retries>0</ns1:retries>
+        <ns1:delay>0</ns1:delay>
+        <ns1:errorAction>Continue</ns1:errorAction>
+        <ns1:rebootRequired>false</ns1:rebootRequired>
+        <ns1:runOnProvisionOnly>false</ns1:runOnProvisionOnly>
+    </ns1:pendingAsset>
+    <ns1:Asset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:Package">
+        <ns1:name>MWS2R3 - Forefront Identity Manager</ns1:name>
+        <ns1:id>39</ns1:id>
+        <ns1:description></ns1:description>
+        <ns1:uuid>ec82019b-19d9-4bbf-a269-5c0ff2695935</ns1:uuid>
+        <ns1:assetType>
+            <ns1:name>package</ns1:name>
+            <ns1:href>assettype/3</ns1:href>
+            <ns1:id>3</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.AssetType+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:assetType>
+        <ns1:top>true</ns1:top>
+        <ns1:assetPath>/Root/MWS2R3_SYD</ns1:assetPath>
+        <ns1:detailedAssetPath>/Root:#ID#1:#TYPE#VMContainer/MWS2R3_SYD:#ID#8:#TYPE#VMProject</ns1:detailedAssetPath>
+        <ns1:lifecycleVersion>-1</ns1:lifecycleVersion>
+        <ns1:removable>true</ns1:removable>
+        <ns1:domain>
+            <ns1:name>domain1</ns1:name>
+            <ns1:href>domain/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Domain+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:domain>
+        <ns1:creator>
+            <ns1:name>admin</ns1:name>
+            <ns1:href>user/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:creator>
+        <ns1:created>2015-05-18T13:31:24+10:00</ns1:created>
+        <ns1:lockType>0</ns1:lockType>
+        <ns1:lastModified>2015-05-18T13:31:41+10:00</ns1:lastModified>
+        <ns1:parent>
+            <ns1:name>MWS2R3_SYD</ns1:name>
+            <ns1:href>project/8</ns1:href>
+            <ns1:id>8</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Project+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:parent>
+        <ns1:slot>134df38f-a0c3-4407-abfc-91d7c17ccfa5</ns1:slot>
+        <ns1:version>1</ns1:version>
+        <ns1:latest>false</ns1:latest>
+        <ns1:publishComment></ns1:publishComment>
+        <ns1:slotId>134</ns1:slotId>
+        <ns1:publisher>
+            <ns1:name>admin</ns1:name>
+            <ns1:href>user/1</ns1:href>
+            <ns1:id>1</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.User+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:publisher>
+        <ns1:versionStatus>active</ns1:versionStatus>
+        <ns1:checkoutAllowed>false</ns1:checkoutAllowed>
+        <ns1:headAllowed>false</ns1:headAllowed>
+        <ns1:operatingSystem>Windows|2012</ns1:operatingSystem>
+        <ns1:install>
+            <ns1:name>MWS2R3 - Forefront Identity Manager</ns1:name>
+            <ns1:href>script/171</ns1:href>
+            <ns1:id>171</ns1:id>
+            <ns1:rel>up</ns1:rel>
+            <ns1:type>application/com.servicemesh.agility.api.Script+xml</ns1:type>
+            <ns1:position>0</ns1:position>
+        </ns1:install>
+    </ns1:Asset>
+</ns1:Envelope>
