@@ -1,4 +1,0 @@
-﻿<?xml version="1.0"?>
-<TrustedDomains>
-    <Domain FQDN="client.local" Account="svc_mwssp" Password="spPassw0rd1234"></Domain>
-</TrustedDomains>

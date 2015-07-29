@@ -1,8 +1,0 @@
-:mod:`blueprints` Module
-----------------------
-
-.. automodule:: cdc.blueprints
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
